@@ -1,0 +1,170 @@
+\documentclass[twocolumns]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[linesnumbered,lined, algoruled]{algorithm2e}
+\usepackage{algorithmic,float}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bm,array}
+\usepackage{color,soul}
+%\usepackage{epstopdf}
+\usepackage[acronym,shortcuts]{glossaries}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage[inline]{enumitem}
+\makeglossaries
+%%% Glossaries/Acronyms
+
+
+\newacronym{auc}{AUC}{area under the curve}
+\newacronym{bs}{BS}{base station}
+\newacronym{ce}{CE}{Cross Entropy}
+\newacronym{fa}{FA}{false alarm}
+\newacronym{kl}{K-L}{Kullback-Leibler}
+\newacronym{ls}{LS}{least-squares}
+\newacronym{llr}{LLR}{log likelihood-ratio}
+\newacronym{los}{LOS}{line of sight}
+\newacronym{lssvm}{LS-SVM}{least squares SVM}
+\newacronym{md}{MD}{mis-detection}
+\newacronym{ml}{ML}{Machine Learning}
+\newacronym{mlp}{MLP}{multy-layer perceptron}
+\newacronym{mse}{MSE}{Mean Squared Error}
+\newacronym[\glslongpluralkey={neural networks}]{nn}{NN}{Neural Network}
+\newacronym{np}{N-P}{Neyman-Pearson}
+\newacronym{oclssvm}{OCLSSVM}{one-class least-square \ac{svm}}
+\newacronym{pdf}{PDF}{probability distribution function}
+\newacronym{pso}{PSO}{particle swarm optimization}
+\newacronym{rnn}{RNN}{replicator neural network}
+\newacronym{roc}{ROC}{receiver operating characteristic}
+\newacronym{rss}{RSS}{received signal strength}
+\newacronym[\glslongpluralkey={support vector machines}]{svm}{SVM}{support vector machine}
+\newacronym{ue}{UE}{user equipment}
+
+\title{User Authentication and Network Planning via Machine Learning Approaches}
+\author{}
+\date{today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\section{System Model}
+We consider a cellular system with $N_{\rm BS}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a location authentication system able to determine if a \ac{ue} is transmitting from within an {\em authorized} sub-region $\mathcal{A}_0$ of the region $\mathcal{A}$. The location dependency of the features of the channel between the \ac{ue} and the \acp{bs} is exploited to distinguish between a transmission from the region $\mathcal{A_0}$ and a transmission from the complementary region $\mathcal{A}_1=\mathcal{A} \setminus \mathcal{A}_0$. We consider here a narrowband transmission and we focus on the power received by the \acp{bs} upon \ac{ue} transmission.
+
+The location authentication procedure is composed by two phases. In the first phase ( authentication identification) the \ac{ue} transmits a training signal ( known at the \acs{bs}) from various points within region $\mathcal{A}_0$, and the \acp{bs} estimates the attenuation value incurred by the transmitted signal and store them in association with $\mathcal{A}_0$. Some external authentication technique must be added in this phase in order to ensure that the \ac{ue} is transmitting from region $\mathcal{A}_0$. Similarly the \ac{ue} transmits a training signal from the complementary area $\mathcal{A}_1$ and the \acp{bs} estimate the attenuation value and store them in association to $\mathcal{A}_1$.
+
+In the second phase (authentication verification) the \ac{ue} transmits a known training sequence from any points in $\mathcal{A}$, and the \acp{bs} must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
+
+The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
+
+\subsection{Channel model}
+
+Consider a network with $N_{\rm bs}$. We denote as $\bm{x}_{\rm bs}^{(n)} =(X_{\rm bs}^{(n)},Y_{\rm bs}^{(n)})$ the position of the $n^{\rm th}$ \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is
+\begin{equation}
+    L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)}) = \sqrt{(X_{\rm bs}^{(n)}-X_u)^2+(Y_{\rm bs}^{(n)}-Y_u)^2}.
+\end{equation}
+When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n^{\rm th}$ \ac{bs} is
+\begin{equation}\label{eq: rec pow}
+    P_{\rm rc}^{(n)}= \frac{P_{\rm tx}}{a^{(n)}},
+\end{equation}
+where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss, shadowing and fading. Denoting the path-loss coefficient as i.e. it can be modelled as a zero-mean Gaussian random variable
+\begin{equation}
+    \sqrt{a^{(n)}} \sim \mathcal{N}\left(0,\sigma_{a,n}^2\right),
+\end{equation}
+where the value $\sigma_{a,n}^2={P_{\ell}^{(n)}}e^{s}$ accounts for the path loss and shadowing components,  where . We can rewrite (\ref{eq: rec pow}) in dB as
+\begin{equation}
+    P_{\rm rc}^{(n)}[dB]= P_{\rm tx}[dB] -  a^{(n)}[dB],
+\end{equation}
+For the path-loss we consider two scenarios: \ac{los} and non-\ac{los}.
+
+For a \ac{los} link the path loss coefficient in dB is modelled as
+\begin{equation}\label{eq:los}
+    P_{\ell,LOS}^{(n)} = 20\log_{10}\left(\frac{f 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{c}\right),
+\end{equation}
+where $f$ is the carrier frequency and $c$ is the speed of light.
+
+For a  non-\ac{los} link the path loss coefficient in dB is defined as
+\begin{equation}
+    P_{\ell, non-LOS}^{(n)} = 40\log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) + 21\log10\left(\frac{f}{10^6}\right) + 80.
+\end{equation}
+
+We assume that shadowing is time-invariant while fading is time dependent. We also assume that shadowing $s$ depends on positions $\bm{x}_{\rm ue}$ and $\bm{x}_{\rm bs}^{(n)}$ and is correlated at different \ac{ue} and \ac{bs} positions. The shadowing map for the area is generated as a multivariate Gaussian distribution with correlation matrix whose entry $(i,j)$ is given by the covariance between two points $\bm{x}_i$ and $\bm{x}_j$ in the space. This depends on their relative distance $d(\bm{x}_i,\bm{x}_j)$ as
+\begin{equation}\label{eq: coor mat}
+    c_s\left(d(\bm{x}_i,\bm{x}_j)\right) = \sigma_s^2e^{-\frac{d}{d_c}},
+\end{equation}
+where $d_c$ is the shadowing decorrelation distance. 
+
+
+\section{BSs' optimal position}\label{sec:bsPos}
+As attenuation maps are different at each \ac{bs} and depend on the surrounding environment in terms of shadowing effects the performance of the authentication system depends on the number of \acp{bs} and their position. In this section we derive an approach to optimally locate \acp{bs} so that the authentication system attains the best performance. 
+
+Consider a sufficiently large training set which is representative of the attenuation vectors measured from both $\mathcal{A}_0$ and $\mathcal{A}_1$. An \ac{mlp} trained with such a set is not likely to find a large number of outliers when tested. In this sense we can say that if a \ac{mlp} attains better performance that another one in the training phase, then it attains better performance also in the testing phase. We hence test different positions for $N_{\rm BS}$ \acp{bs} and, for each one, we train a \ac{mlp} with a sufficient number of training vectors and compute the minimum value obtained by the gradient descent algorithm used for training.
+
+Fig. \ref{fig:mseVSauc} shows the performance obtained with $8$ random positions for $N_{\rm BS}=5$ \acp{bs}. For all curves is reported the minimum \ac{mse} obtained during training and the corresponding \ac{auc} after testing. We see that \ac{mse} values can be divided in ranges, each one corresponding to different values of \ac{auc}. In particular we notice that lower ranges of \ac{mse} correspond to higher values of \ac{auc}. For \acp{mlp} attaining  \ac{mse} values within the same range we must instead also perform testing in order to choose the configuration with better classification performance. Hence, in order to find the optimal configuration we implement an iterative algorithm which, for each configuration, build a training set and trains a \ac{mlp} and updates the position of the \acp{bs} according to the obtained \ac{mse} value. When the difference between the current \ac{mse} value and that obtained at the previous iteration is smaller than a threshold value $\lambda_{\rm diff}$ then a testing set is built and the relative \ac{auc} values are computed. The configuration with higher \ac{auc} is then selected as the optimal one.
+
+ \begin{figure}
+     \centering
+     \includegraphics[width=0.5\columnwidth]{mseVSauc.eps}
+     \caption{\ac{roc} curves for different BS positions. Lower \ac{mse} are associated to higher \ac{auc}}
+     \label{fig:mseVSauc}
+ \end{figure}
+
+Notice however that the problem is non-convex as the map realization depends on the \acp{bs} position and on a random shadowing and fading realization. Therefore we exploit the \ac{pso} \cite{Kennedy-11}.
+
+\ac{pso} is an iterative optimization algorithm based on social behavior of animals (e.g. birds flocking and fish schools). Consider a particle as a set of positions for the \acp{bs} and consider a total number of $P$ particles. Each one is a possible candidate solution of the optimization problem. Each particle is described by its position $\bm{x}_p$, which is a $N_{\rm BS}$ dimensional vector containing the positions of the \acp{bs} and representing a possible solution, and its velocity $\bm{v}_p$.
+Starting from a random initialization of all the particles at each iteration both the positions $\bm{x}_p$ and the velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimal value found so far by the entire population and a local optimal value for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration.
+
+The position and velocity of the particles are updated at iteration $t$ as
+  \begin{equation}\label{eq: v up}
+\begin{split}
+  \bm{v}_p(t) = w\bm{v}_p(t-1)+\phi_1(t)(\bm{o}_p(t-1)-\\
+  -\bm{x}_p(t-1))+\phi_2(t)(\bm{o}_g(t-1)-\bm{x}_p(t-1));
+  \end{split}
+  \end{equation}
+  \begin{equation}\label{eq: p up}
+  \bm{x}_p(t) = \bm{x}_p(t-1) + \bm{v}_p(t);
+ \end{equation}
+where $w$ is the inertia coefficient and $\phi_1$ and $\phi_2$ are random variables distributed respectively in $[0,c_1]$ and $[0,c_2]$, where $c_1$ and $c_2$ are defined as acceleration constants. The values of the inertia coefficient and of the acceleration constants are the parameters of the \ac{pso} problem. Typical values for this parameters are $w=0.7298$, $c_1=c_2=1.4961$ \cite{Kennedy-11}.
+
+The algorithm steps for \acp{bs} positioning are reported in Algorithm 1. We initialize $P$ particles with random positions for each of the $N_{\rm BS}$ in each particle. For each particle $p$ we then build and train a \ac{nn} and compute the achieved \ac{mse} value MSE$_p^{(0)}$. \ac{pso} is then exploited to iteratively update the position of the particles. Notice that in order to find the best local and global optimal positions \ac{mse} values at the current and previous iterations are compared. If this values are in the same range, i.e., if $|\rm{MSE}_p^{(it-1)}-\rm{MSE}_p^{(it)}|<\lambda_{\rm diff}$ then the \acp{nn}  are also tested and decision is taken based on the \ac{auc} values, otherwise decision is taken based on \ac{mse} values.
+
+ \begin{algorithm}[t]
+   \algsetup{linenosize=\tiny}
+   \scriptsize
+
+  \KwData{ number of particles $P$, $N_{\rm BS}$, $\lambda_{\rm diff}$}
+  \KwResult{optimal position }
+  Initialization: select random positions for the components of each particle\;
+                  build training set for each particle\;
+                  build and train a \ac{nn} for each particle and obtain the training performance $\rm{MSE}_p^{(0)}$, $p=1,...,N_p$\;
+                  $it = 0$\;
+
+  \Repeat{convergence of particles positions}{
+         $it = it + 1$\;
+         \For{$p=1,...,P$}{
+         update velocity and position vector of particle $p$ via (\ref{eq: v up}) and (\ref{eq: p up})\;
+         build a training set\;
+         build and test a \ac{nn} and compute $\rm{MSE}_p^{(it)}$\;
+         \eIf{$|\rm{MSE}_p^{(it-1)}-\rm{MSE}_p^{(it)}|<\lambda_{\rm diff}$}{
+         compute $\rm{AUC}_p^{(it-1)}$ and $\rm{AUC}_p^{(it)}$ for both \acp{nn}\;
+         update PSO vectors based on AUC$_p$\;
+        
+         }{
+         update PSO vectors based on MSE$_p$\;
+        }
+        
+         }
+      
+      }
+    
+\caption{BSs positioning algorithm}
+ \end{algorithm}
+
+The position of the particle that achieves the global minimum \ac{mse} or maximum \ac{auc} at the end of the optimization problem is the best position for the \acp{bs}. Notice that, as the optimization problem is non-convex, solving \ac{pso} is similar to a multi-start  optimization considering $P$ different starting points, which is a standard method used to avoid local minimums. Hence as the number $P$ increases the probability of finding a local solution is reduced.
+
+Notice that the \acp{bs} positioning problem could be solved without implementing a \ac{nn} by mean of computation of the \acp{llr} for the different positions. However we showed in Section \ref{sec:shadow} that when considering multiple \acp{bs} and including shadowing effects the exact computation of the \ac{llr} curve requires more data than those needed for training a \ac{nn}. Hence the proposed solution is effective in terms of both authentication performance and number of needed data.
+
+\end{document}
