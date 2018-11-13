@@ -19,8 +19,8 @@
 
 
 \newacronym{auc}{AUC}{area under the curve}
-\newacronym{bs}{BS}{base station}
-\newacronym{ce}{CE}{Cross Entropy}
+\newacronym{bs}{AP}{access point}
+\newacronym{ce}{CE}{cross entropy}
 \newacronym{fa}{FA}{false alarm}
 \newacronym{kl}{K-L}{Kullback-Leibler}
 \newacronym{ls}{LS}{least-squares}
@@ -28,13 +28,14 @@
 \newacronym{los}{LOS}{line of sight}
 \newacronym{lssvm}{LS-SVM}{least squares SVM}
 \newacronym{md}{MD}{mis-detection}
-\newacronym{ml}{ML}{Machine Learning}
+\newacronym{ml}{ML}{machine learning}
 \newacronym{mlp}{MLP}{multy-layer perceptron}
-\newacronym{mse}{MSE}{Mean Squared Error}
-\newacronym[\glslongpluralkey={neural networks}]{nn}{NN}{Neural Network}
+\newacronym{mse}{MSE}{mean squared error}
+\newacronym[\glslongpluralkey={neural networks}]{nn}{NN}{neural network}
 \newacronym{np}{N-P}{Neyman-Pearson}
 \newacronym{oclssvm}{OCLSSVM}{one-class least-square \ac{svm}}
 \newacronym{pdf}{PDF}{probability distribution function}
+\newacronym{pmd}{PMD}{probability mass distribution}
 \newacronym{pso}{PSO}{particle swarm optimization}
 \newacronym{rnn}{RNN}{replicator neural network}
 \newacronym{roc}{ROC}{receiver operating characteristic}
@@ -42,14 +43,15 @@
 \newacronym[\glslongpluralkey={support vector machines}]{svm}{SVM}{support vector machine}
 \newacronym{ue}{UE}{user equipment}
 \newacronym{wsn}{WSN}{wireless sensor network}
+\newacronym{irlv}{IRLV}{in-region location verification}
 
 %\usepackage[autostyle]{csquotes}
 \usepackage[backend=biber,style=ieee]{biblatex}
 \bibliography{bibliography}
 
 
-\title{Location-based Authentication and Network Planning via Machine Learning Approaches}
-\author{  Alessandro Brighente, Francesco Formaggio, Giorgio Maria Di Nunzio, and  Stefano Tomasin  \\ {\small Department of Information Engineering, University of Padova, via G. Gradenigo 6/B, Padova, Italy. first.lastname@dei.unipd.it} }
+\title{Location-Verification and Network Planning \\ via Machine Learning Approaches}
+\author{Alessandro Brighente, Francesco Formaggio, Giorgio Maria Di Nunzio, and  Stefano Tomasin  \\ {\small Department of Information Engineering, University of Padova, via G. Gradenigo 6/B, Padova, Italy. first.lastname@dei.unipd.it} }
 \date{today}
 
 \begin{document}
@@ -57,30 +59,34 @@
 \maketitle
 
 \begin{abstract}
-Physical layer authentication has been proposed as an effective alternative scheme to traditional upper layer-based techniques, such as cryptography, in order to provide a secure authentication scheme. In this paper, we exploit the area specific attenuation values to perform location-based authentication, i.e. granting access to the network only to users located in a pre-defined area. We firstly implement the authentication system by exploiting  \ac{ml} techniques, namely the \acp{nn} and the \ac{svm}. We then show via numerical simulation that, in a simple scenario, the authentication system obtained with this techniques is equivalent to that obtained via the optimal \ac{np} criterion. By introducing a realistic channel model we then show that the proposed \ac{nn} implementation of the authentication system is convenient respect to \ac{np}. The problem of optimally locating the \acp{bs} over the network area is lastly address.
+We consider the \ac{irlv} problem of deciding if a message coming from a terminal over a wireless network has been originated from a specific physical area (e.g., a safe room) or not. The detection process exploits the features of the channel over which the transmission occurs with respect to a set of network access points. A  \ac{ml} approach is used, based on  \ac{nn} or a \ac{svm} trained with channel features  (in particular, noisy attenuation factors) collected by the access points for various positions of the terminal both inside and outside the specific area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the access points for maximizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the decision variable and its correct value. Through simulations we show that for long training and machines with enough parameters the proposed solution achieves the performance of the \ac{np} lemma, and we apply a \ac{pso} approach for the optimization of the access point positions.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Physical layer security, authentication, neural network, auto-encoder, support vector machine
+Physical layer security, location verification, neural network, support vector machine, network planning
 \end{IEEEkeywords}
+\glsresetall
 
 \section{Introduction}
-As the network latency requirement becomes stricter, the timely sharing of security keys in large and dense networks may not be supported by this type of networks. This is further complicated by the computational cost of key generation and detection. Physical layer techniques have been proposed as an alternative to digital key generation. Exploiting properties of the communication channel such as the \ac{rss} to distinguish radio transmitters wireless network are able to implement authentication techniques without relying on upper layer technqiues such as cryptography. In this paper, we exploit area specific attenuation values to distinguish between a legitimate and non-legitimate area, implementing in such a way a location-based authentication system.
 
-Traditional detection systems are based on \ac{np} lemma, with an example in \cite{Baracca-12}, where the \ac{np} framework has been exploited to implement an authentication system suited for multiple wiretap channels with correlated fading. A further example is \cite{Pan-17}, where \ac{ml} algorithms have been exploited in order to estimate the parameter needed to perform \ac{np} based testing.
+The applications exploiting the location of the user are rapidly spreading as they allow to provide very customized services, from shopping opportunities to proper data collection for sensor network. In some cases services should be available only pre-determined areas for commercial or legal reasons, e.g., media streaming, such as online voting, online gambling and location-based social networking. In these and other application it is important to verify the position of the user rather than simply rely on its claims, that can easily forged by hacking the software.
 
-The knowledge of the probability distributions needed to perform the optimal testing may however be not available. \ac{ml} techniques have been introduced as an alternative method to perform user authentication without requiring prior knowledge of the channel statistics. An implementation example is \cite{xiao-2018}, where no assumption is made on the channel model and logistic regression has been proposed as an alternative to hypothesis testing. More complicated \ac{ml} architectures may also be exploited, as in \cite{Wang-17} where feed-forward \ac{nn} receives as input the Euclidean distance between successive channels and the Pearson coefficient as feature space to perform authentication. 
+Location verification systems aims at verifying the position of a devices in a mobile communication network, and find application in various scenarios, spanning from sensor networks \cite{Zeng-survey, 8376254}, to the Internet of Things \cite{7903611}, to geo-specific encryption \cite{quaglia}. Various approaches have been proposed, typically based on the measurement of the distance between the transmitter and other users  or  anchor nodes belonging to the network infrastructure. The distance measures are obtained for example through the \ac{rss} at anchor nodes for signals transmitted by the terminal to be verified.  This problem is closely related to the {\em user authentication} at the physical layer, where the channel features are exploited to verify the sender of a message over a wireless channel \cite{7270404}.
 
-\Acp{svm} have also been exploited to classify channel features. In \cite{tian2015robust} a multi-class classification problem is formulated to implement an authentication system which locates users in different rooms. In \cite{pei2014channel} instead, the authors describe an authentication scheme in which a learning machine (an \ac{svm} and linear Fisher discriminant analysis) is first trained with channel feature vectors and then used to classify the sender as trusted or malicious. 
+In this paper we focus on the {\em in-region} location verification problem, i.e., the problem of deciding if a message coming from a terminal over a wireless network has been originated from a specific physical area (e.g., a safe room) or not \cite{quaglia}. This can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently in \cite{7145434} a delay-based verification technique has been proposed, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays.  
 
-Network planning, i.e., designing optimal \acp{bs}' layout maximizing a chosen metric, has been studied in the literature in the context of \ac{wsn} \cite{bogdanov2004power} \cite{akkaya2007positioning} and cellular systems \cite{mathar2001optimal} \cite{glasser2005complexity}  \cite{islam2012capacity} \cite{yangyang2004particle}. In \cite{bogdanov2004power} the sensors network is optimized using as metric the rate of transmission between nodes. The resulting optimization is then solved using two euristic iterative algorithms, since the problem is NP-complete. For a comparison between other proposed approaches and metric choices for \ac{wsn}, see \cite{akkaya2007positioning}. For what concerns cellular systems, in \cite{mathar2001optimal} and \cite{islam2012capacity} the chosen metrics are, respectively, the number of connected users and the cumulative channel capacities. For both these works the solving tools are taken from the integer and mixed-integer programming literature. In \cite{yangyang2004particle}, instead, \ac{pso} is used to optimize \acp{bs}' position w.r.t coverage and deployment costs (proportional to  the number of \acp{bs}).
-To the best of authors' knowledge there are no literature examples of \acp{bs} positions planning that seek to optimize physical layer authentication performance.
+In this paper we consider the location verification problem exploiting the features of the channel over which the transmission occurs with respect to a set of network access points, and can be seen as a location-verification system. We start from the observation that as an hypothesis testing problem, the most powerful test for a given significance for \ac{irlv} is provided by the \ac{np} lemma \cite{Neyman289}, i.e., the test providing the minimum \ac{md} probability for a given \ac{fa} probability. We derive close-form expressions for the \ac{np} test for a simple channel model and simple access point configuration. Then we observe that for more complicated situations the close-form solution may not be available. Moreover,  channel impairments that affect the measurements may not be known statistically, as they may depend on random unknown phenomena as shadowing and fading. We therefore propose here to use a \ac{ml} approach, where first data are collected by trusted nodes both inside and outside the region of interest and a machine is trained to take decisions between the two hypothesis before deployment as tester. \ac{ml} techniques have already found application in the user authentication problem (see  \cite{pei2014channel, tian2015robust,Wang-17, xiao-2018, }). However, to the best of authors' knowledge \ac{ml} solutions have never been applied before to the \ac{irlv} problem. 
 
-In this paper we propose a location-based authentication system, which grants access to the network services only to user located inside a legitimate area. The problem is formulated as an hypothesis testing framework,where the system must discriminate between a legitimate and a non-legitimate area based on the features of the transmission channel. In order to solve the problem we exploit two \ac{ml} architectures, namely the \ac{nn} and the \ac{svm}. We show via numerical symulations that in a simple scenario this techniques are equivalent to the optimal \ac{np} criterion for classification. We then show the performance of the system in a more complicated scenario and show the effect of the training set size over the performance of the system. Lastly we propose an algorithm which exploits the aformentioned \ac{ml} techniques in order to optimally locate the \acp{bs} over the network area, such that the best performance of the authentication system are obtained.
+We design the \ac{ml} solutions using the \ac{ce} between the decision variable and its correct value as optimization criterion and we show by simulations that the \ac{roc} of the \ac{ml} detector converges to that of the \ac{np} test as the complexity of the machine grows, in terms of number of neurons or training set size, and the number of training points goes to infinity. We then address the problem of optimum positioning of the access points that provides the data over which the test is performed. Two metrics are considered: the \ac{ce} between the decision variable and its correct value and the \ac{auc} of the \ac{roc}. Both are known to provide a single-number indication on how good the tests is. In a simulation environment, a \ac{pso} solution is proposed to attractively update the position of the access points gradually increasing the target metrics until convergence to a local optimum. Multiple starting points are considered and the \ac{pso} is repeated in order to get closer to the global optimum position of the access points. We also show the relation between the two metrics, \ac{auc} and \ac{ce}, showing how both are function of the two test metrics, i.e., \ac{fa} and \ac{md} probabilities.
 
+The rest of the paper is organized as follows \hl{TBD}
 
-
+%Network planning, i.e., designing optimal \acp{bs}' layout maximizing a chosen metric, has been studied in the literature in the context of \ac{wsn} \cite{bogdanov2004power} \cite{akkaya2007positioning} and cellular systems \cite{mathar2001optimal} \cite{glasser2005complexity}  \cite{islam2012capacity} \cite{yangyang2004particle}. In \cite{bogdanov2004power} the sensors network is optimized using as metric the rate of transmission between nodes. The resulting optimization is then solved using two heuristic iterative algorithms, since the problem is NP-complete. For a comparison between other proposed approaches and metric choices for \ac{wsn}, see \cite{akkaya2007positioning}. For what concerns cellular systems, in \cite{mathar2001optimal} and \cite{islam2012capacity} the chosen metrics are, respectively, the number of connected users and the cumulative channel capacities. For both these works the solving tools are taken from the integer and mixed-integer programming literature. In \cite{yangyang2004particle}, instead, \ac{pso} is used to optimize \acp{bs}' position w.r.t coverage and deployment costs (proportional to  the number of \acp{bs}).
+%To the best of authors' knowledge there are no literature examples of \acp{bs} positions planning that seek to optimize physical layer authentication performance.
+ 
 \section{System Model}
+
+
 We consider a cellular system with $N_{\rm BS}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a location authentication system able to determine if a \ac{ue} is transmitting from within an {\em authorized} sub-region $\mathcal{A}_0$ of the region $\mathcal{A}$. The location dependency of the features of the channel between the \ac{ue} and the \acp{bs} is exploited to distinguish between a transmission from the region $\mathcal{A_0}$ and a transmission from the complementary region $\mathcal{A}_1=\mathcal{A} \setminus \mathcal{A}_0$. We consider here a narrowband transmission and we focus on the power received by the \acp{bs} upon \ac{ue} transmission.
 
 The location authentication procedure is composed by two phases. In the first phase ( authentication identification) the \ac{ue} transmits a training signal ( known at the \acs{bs}) from various points within region $\mathcal{A}_0$, and the \acp{bs} estimates the attenuation value incurred by the transmitted signal and store them in association with $\mathcal{A}_0$. Some external authentication technique must be added in this phase in order to ensure that the \ac{ue} is transmitting from region $\mathcal{A}_0$. Similarly the \ac{ue} transmits a training signal from the complementary area $\mathcal{A}_1$ and the \acp{bs} estimate the attenuation value and store them in association to $\mathcal{A}_1$.
@@ -89,7 +95,7 @@ In the second phase (authentication verification) the \ac{ue} transmits a known 
 
 The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
 
-\subsection{Channel model}
+\subsection{Channel Model}
 
 Consider a network with $N_{\rm bs}$. We denote as $\bm{x}_{\rm bs}^{(n)} =(X_{\rm bs}^{(n)},Y_{\rm bs}^{(n)})$ the position of the $n^{\rm th}$ \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is
 \begin{equation}
@@ -104,7 +110,7 @@ where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs}
     \sqrt{a^{(n)}} \sim \mathcal{N}\left(0,\sigma_{a,n}^2\right),
 \end{equation}
 
-For the path-loss we consider two scenarios: \ac{los} and non-\ac{los}.
+The channel model for path loss and shadowing is the on in \cite{3gpp}. For the path-loss we consider two scenarios: \ac{los} and non-\ac{los}.
 
 For a \ac{los} link the path loss coefficient in dB is modelled as
 \begin{equation}\label{eq:los}
@@ -115,20 +121,22 @@ where $f$ is the carrier frequency and $c$ is the speed of light.
 For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    P_{\ell, non-LOS}^{(n)} = 40\log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) \\
-    + 21\log10\left(\frac{f}{10^6}\right) + 80.
+    P_{\ell, non-LOS}^{(n)} = 40\left(1-4\times 10^{-3}\times h_{\rm BS}\right)\log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) \\
+    -18\log_{10}h_{\rm BS}
+    + 21\log10\left(\frac{f}{10^6}\right) + 80,
     \end{split}
 \end{equation}
+where $h_{\rm SB}$ is the \ac{bs} antenna elevation.
 
 We assume that shadowing is time-invariant while fading is time dependent. We also assume that shadowing $s$ depends on positions $\bm{x}_{\rm ue}$ and $\bm{x}_{\rm bs}^{(n)}$ and is correlated at different \ac{ue} and \ac{bs} positions. The shadowing map for the area is generated as a multivariate Gaussian distribution with correlation matrix $\bm{\Sigma}$ whose entry $\left[\bm{\Sigma}\right]_{(i,j)}$ is given by the covariance between two positions $\bm{x}_i$ and $\bm{x}_j$. This depends on their relative distance $d(\bm{x}_i,\bm{x}_j)$ as
 \begin{equation}\label{eq: coor mat}
-    \left[\bm{\Sigma}\right]_{(i,j)} = \sigma_s^2e^{-\frac{d}{d_c}},
+    \left[\bm{\Sigma}\right]_{(i,j)} = e^{-\frac{d}{d_c}},
 \end{equation}
 where $d_c$ is the shadowing decorrelation distance. 
 
-\subsection{LOS case}
+\subsection{LOS Case}
 
-In this section we derive the \ac{llr} function for a simplified scenario. We will use this result in the numerical section èpart to compare the classificator performance of the \ac{ml} approaches with the optimal one.
+In this section we derive the \ac{llr} function for a simplified scenario. We will use this result in the numerical section part to compare the classificator performance of the \ac{ml} approaches with the optimal one.
 
 Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider the legitimate area $\mathcal{A}_{0}$ as a rectangle of height $H$ and length $L$ and with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The non-legitimate area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
 
@@ -156,7 +164,7 @@ from which we obtain the closed form solution for (\ref{eq:lr})
     \mathcal{L}=\log\left(\frac{|\mathcal{A}_1|a(R_0)}{|\mathcal{A}_0|\left(2\pi-a(R_0)\right)}\right).
 \end{equation}
 
-\section{Classification via machine learning}
+\section{Classification via Machine Learning}
 In this section we quickly review two \ac{ml} techniques, namely the \ac{mlp} and the \ac{svm}, and show how to exploit them in order to perform user authentication.
 
 We assume that the authentication system has access to both regions $\mathcal{A}_0$ and $\mathcal{A}_1$ and that during the authentication phase $S$ attenuation vectors $\bm{a}^{(i)}, \ i=1,\dots S$  belonging to both regions are collected. These values will then be used as input of the \ac{ml} algorithms. Denoting as $\bm{a}^{(i)}\in \mathcal{A}_n$ an attenuation vector generated from a \ac{ue} located in area $\mathcal{A}_{n}$, the objective is to obtain at the output of the \ac{ml} algorithm the identification function defined as
@@ -173,7 +181,7 @@ In order to test and compare the authentication systems we define two error prob
 
 \subsection{Multi-Layer Perceptron}\label{sec:nn}
 
-A \ac{mlp} is a feedforward neural network which implements a function of the type $\mathbb{R}^N \to \mathbb{R}^O$, which maps a set of $N$ real values into $O$ real values. The input is processed in stages, named layers, where the output of one layer is the input of the next layer.
+A \ac{mlp} is a feed-forward neural network which implements a function of the type $\mathbb{R}^N \to \mathbb{R}^O$, which maps a set of $N$ real values into $O$ real values. The input is processed in stages, named layers, where the output of one layer is the input of the next layer.
 
 Layer $L-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ functions named neurons. The output of the $n^{\rm th}$ neuron of the $\ell^{\rm th}$ layer is
 \begin{equation}\label{eq:nonLin}
@@ -209,21 +217,35 @@ where $\gamma^*$ is a fixed threshold and controls \ac{fa} and \ac{md} probabili
 
 While the feature-space transformation function is typically fixed, the vector $\mathbf{w}$ must be properly chosen to perform the desired classification
 
-\section{BSs' optimal position}\label{sec:bsPos}
-As attenuation maps depend on the position of the \ac{bs} and on the surrounding environment in terms of shadowing effects the performance of the authentication system depend on the number of \acp{bs} and their location in the space. In this section we derive an approach to optimally locate \acp{bs} so that the authentication system attains the best performance. 
 
-The optimal approach for a location-based authentication system is to find a \acp{bs} position configuration such that the $P_{\rm MD}$ is minimized for each $P_{\rm FA}$ value. In order to use a global measure for such a requirement we resort to the \ac{auc} \cite{hanley-82}. 
+\section{APs' Optimal Position}\label{sec:bsPos}
 
-For a testing set $\mathcal{X}$ we define the \ac{auc}$(\mathcal{X})$ as
+
+
+As attenuation maps depend on the position of the \acp{bs} and on the surrounding environment in terms of shadowing effects the performance of the authentication system depend on the number of \acp{bs} and their location in the space. In this section we derive an approach to optimally locate \acp{bs} so that the authentication system attains the best performance. 
+
+A performance metric to be minimized for the optimization of \ac{bs} position could be the \ac{md} probability for a fixed \ac{fa} probability. However, for different values of target \ac{fa} probability we should re-optimize the \ac{bs} position. Here we focus instead on metrics independent from specific values of the \ac{fa} probability, i.e., that depends on the \ac{roc} as a whole. Note that in this paper we consider the \ac{roc} as the \ac{md} probability as a function of the \ac{fa} probability. The \ac{roc} can be obtained by training the detectors and then computing the \ac{fa} and \ac{md} probabilities for all possible values of thresholds \hl{TBD}, for \ac{nn} and \ac{svm}. In particular, we consider two metrics, i.e., the   \ac{roc} \ac{auc} \cite{hanley-82} and the  \ac{ce}.
+
+The \ac{roc} \ac{auc} is defined as 
 \begin{equation}
     \text{\ac{auc}}(\mathcal{X}) = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
 \end{equation}
-where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a function of the $P_{\rm FA}$.
-The optimal solution is given by the set of \acp{bs} position which attains the minimum \ac{auc} value. Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}. 
+where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a function of the $P_{\rm FA}$, which correspond to the integral of the \ac{roc} function. By minimizing the \ac{auc} we minimize the average \ac{md} probability for a uniform \ac{fa} probability\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}. 
+
+The \ac{ce} is defined in (\ref{eq:ce}), which can also written as 
+\begin{equation}
+\mathbb H(p_t,p_{\hat{t}}) = \mathbb H(p_t) + \mathbb D(p_t; p_{\hat{t}})\,,
+\end{equation}
+where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$, $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the Kullback-Leibler divergence which for Bernoulli variables can be written as 
+\begin{equation}
+\mathbb D(p_t; p_{\hat{t}}) = 
+\end{equation}
+
+and by the definition of entropy and Kullback-Leibler divergence between two random varia
 
 However the computation of the \ac{auc} implies that for each \acp{bs} setting we must train and test a \ac{ml} algorithm, which is computationally expensive in time terms. 
 
-Consider a sufficiently large training set which is representative of the attenuation vectors measured from both $\mathcal{A}_0$ and $\mathcal{A}_1$. A \ac{mlp} trained with such a set is not likely to find a large number of outliers when tested. In this sense we can say that if a \ac{mlp} attains better performance that another one in the training phase, then it attains better performance also in the testing phase. We hence propose to use the training metric as a proxy for the \ac{auc}, considering as optimal the positioning which grants minimum training metric.
+Consider a sufficiently large training set which is representative of the attenuation vectors measured from both $\mathcal{A}_0$ and $\mathcal{A}_1$. A \ac{mlp} trained with such a set is not likely to find a large number of outliers when tested. In this sense we can say that if a \ac{mlp} attains better performance that another one in the training phase, then it attains better performance also in the testing phase. We hence propose to use the training metric as a proxy for the \ac{auc}, considering as optimal the positioning which grants minimum value of the training metric.
 
 \subsection{Particle Swarm Optimization}
 
@@ -250,7 +272,7 @@ The same algorithm is implemented by considering the \ac{auc}, hence building a 
 
  \begin{algorithm}[t]
    \algsetup{linenosize=\tiny}
-   \scriptsize
+   
 
   \KwData{ number of particles $P$, $N_{\rm BS}$}
   \KwResult{optimal position }
@@ -318,7 +340,7 @@ Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of iterat
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=1\columnwidth]{CE_3.eps}
+    \includegraphics[width=1\columnwidth]{CE_71_real.eps}
     \caption{Mean \ac{ce} vs. number of \ac{pso} iterations.}
     \label{fig:CE}
 \end{figure}
@@ -330,6 +352,7 @@ Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of iterat
     \label{fig:CEvsAUC}
 \end{figure}
 
+\section{Conclusions}
 
 \renewcommand*{\bibfont}{\footnotesize}
 
