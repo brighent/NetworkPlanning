@@ -1,4 +1,4 @@
-\documentclass[twocolumns]{IEEEtran}
+\documentclass[conference]{IEEEtran}
 \usepackage[utf8]{inputenc}
 \usepackage[linesnumbered,lined, algoruled]{algorithm2e}
 \usepackage{algorithmic,float}
@@ -117,7 +117,7 @@ where $f$ is the carrier frequency and $c$ is the speed of light.
 For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    P_{\ell, non-LOS}^{(n)} = 40\left(1-4\times 10^{-3}\times h_{\rm BS}\right)\log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) \\
+    P_{\ell, nLOS}^{(n)} = 40\left(1-4\times 10^{-3}\times h_{\rm BS}\right) \log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) \\
     -18\log_{10}h_{\rm BS}
     + 21\log10\left(\frac{f}{10^6}\right) + 80,
     \end{split}
@@ -336,7 +336,7 @@ Figure \ref{fig:NP_comp} shows the \ac{md} probability vs. the \ac{fa} probabili
 
  \begin{figure}[h]
      \centering
-     \includegraphics[width=1\columnwidth]{FA_MD_LOS.eps}
+     \includegraphics[width=0.9\columnwidth]{FA_MD_LOS.eps}
      \caption{$P_{\rm MD}$ vs. $P_{\rm FA}$ comparison between \ac{nn} with different number of neurons in the hidden layer and the optimal \ac{np} classifier. Results are reported for different number $N_h$ of neurons in the hidden layer.}
      \label{fig:NP_comp}
  \end{figure}
@@ -348,7 +348,7 @@ Here, we consider a network with $N_{\rm AP}=5$ \acp{bs}, each one gathering att
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=1\columnwidth]{surfColorato.png}
+    \includegraphics[width=0.9\columnwidth]{surfColorato.png}
     \caption{Example of a realization of the attenuation map in the non-\ac{los} scenario considering only the shadowing effects.}
     \label{fig:trueMap}
 \end{figure}
@@ -357,7 +357,7 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{md} v
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=1\columnwidth]{mean_maps.eps}
+    \includegraphics[width=0.9\columnwidth]{mean_maps.eps}
     \caption{Average $P_{\rm MD}$ vs. average $P_{\rm FA}$ of the authentication system trained with different number of attenuation vectors. $N_L=3$ layer \ac{nn} with $N_h=6$ neurons in the hidden layer.}
     \label{fig:n_train}
 \end{figure}
@@ -369,7 +369,7 @@ Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{ps
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=1\columnwidth]{CE_vsAUC.eps}
+    \includegraphics[width=0.9\columnwidth]{CE_vsAUC.eps}
     \caption{Mean \ac{auc} vs. number of \ac{pso} iterations. Comparison between the \ac{auc} obtained with \ac{auc} as \ac{pso} objective, \ac{auc} obtained with \ac{ce} as \ac{pso} objective and \ac{auc} obtained with Algorithm 1. }
     \label{fig:CEvsAUC}
 \end{figure}
