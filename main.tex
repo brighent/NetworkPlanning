@@ -1,19 +1,21 @@
 \documentclass[conference]{IEEEtran}
+
+
 \usepackage[utf8]{inputenc}
 \usepackage[linesnumbered,lined, algoruled]{algorithm2e}
-\usepackage{algorithmic,float}
+\usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{balance}
-\usepackage{bm,array}
-\usepackage{color,soul}
+\usepackage{bm}
+%\usepackage{color,soul}
 %\usepackage{epstopdf}
 \usepackage[acronym,shortcuts]{glossaries}
 \usepackage{graphicx}
 \usepackage{graphics}
-\usepackage[inline]{enumitem}
+%\usepackage[inline]{enumitem}
 \makeglossaries
 %%% Glossaries/Acronyms
 
@@ -21,6 +23,7 @@
 \newacronym{auc}{AUC}{area under the curve}
 \newacronym{bs}{AP}{access point}
 \newacronym{ce}{CE}{cross entropy}
+\newacronym{cdf}{CDF}{cumulative distribution function}
 \newacronym{fa}{FA}{false alarm}
 \newacronym{kl}{K-L}{Kullback-Leibler}
 \newacronym{ls}{LS}{least-squares}
@@ -34,7 +37,7 @@
 \newacronym[\glslongpluralkey={neural networks}]{nn}{NN}{neural network}
 \newacronym{np}{N-P}{Neyman-Pearson}
 \newacronym{oclssvm}{OCLSSVM}{one-class least-square \ac{svm}}
-\newacronym{pdf}{PDF}{probability distribution function}
+\newacronym{pdf}{PDF}{probability density function}
 \newacronym{pmd}{PMD}{probability mass distribution}
 \newacronym{pso}{PSO}{particle swarm optimization}
 \newacronym{rnn}{RNN}{replicator neural network}
@@ -51,7 +54,7 @@
 
 
 \title{Location-Verification and Network Planning \\ via Machine Learning Approaches}
-\author{Alessandro Brighente, Francesco Formaggio, Giorgio Maria Di Nunzio,  Stefano Tomasin and Marco Centenaro  \\ {\small Department of Information Engineering, University of Padova, via G. Gradenigo 6/B, Padova, Italy. first.lastname@dei.unipd.it} }
+\author{Alessandro Brighente, Francesco Formaggio, Marco Centenaro, Giorgio Maria Di Nunzio, and    Stefano Tomasin \\ {\small Department of Information Engineering, University of Padova, via G. Gradenigo 6/B, Padova, Italy. first.lastname@dei.unipd.it} }
 \date{today}
 
 \begin{document}
@@ -59,27 +62,27 @@
 \maketitle
 
 \begin{abstract}
-We consider the \ac{irlv} problem of deciding if a message coming from a terminal over a wireless network has been originated from a specific physical area (e.g., a safe room) or not. The detection process exploits the features of the channel over which the transmission occurs with respect to a set of network access points. A  \ac{ml} approach is used, based on \ac{nn}. The \ac{nn} is trained with channel features (in particular, noisy attenuation factors) collected by the access points for various positions of the terminal both inside and outside the specific area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the access points for maximizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the decision variable and its correct value. Through simulations we show that for long training and machines with enough parameters the proposed solution achieves the performance of the \ac{np} lemma, and we apply a \ac{pso} approach for the optimization of the access point positions.
+We consider the \ac{irlv} problem of deciding if a message coming from a \ac{ue} over a wireless network has been originated from a specific physical area (e.g., a safe room) or not. The detection process exploits the features of the channel over which the transmission occurs with respect to a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with channel features (in particular, noisy attenuation factors) collected by the \acp{bs} for various positions of the \ac{ue} both inside and outside the specific area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and its correct label. We propose a two-stage \ac{pso} algorithm having as target first the  minimization of  the \ac{ce} and  the \ac{roc} \ac{auc} in the two stages. Through simulations we show that for long training and \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Physical layer security, location verification, neural network, support vector machine, network planning
+Physical layer security, location verification, neural network, support vector machine, network planning.
 \end{IEEEkeywords}
 \glsresetall
 
 \section{Introduction}
 
-The applications exploiting the location of the user are rapidly spreading as they allow to provide very customized services, from shopping opportunities to proper data collection for sensor networks. In some cases, services should be available only in pre-determined areas for commercial or legal reasons, e.g., media streaming, such as online voting, online gambling and location-based social networking. In these and other applications it is important to verify the position of the user rather than simply rely on its claims, that can be easily forged by hacking the software.
+Applications using information on the user  location are rapidly spreading, also to ensure that some services are obtained only in pre-determined areas, e.g., media streaming,  online voting,  gambling and location-based social networking. In these and other applications it is important to verify the position of the user rather than simply rely on its claims, that can be easily forged by hacking the software.
 
-Location verification systems aims at verifying the position of devices in a mobile communication network, and find application in various scenarios, spanning from sensor networks \cite{Zeng-survey, 8376254}, to the Internet of Things \cite{7903611}, to geo-specific encryption \cite{quaglia}. Various approaches have been proposed, typically based on the measurement of the distance between the transmitter and other users  or  anchor nodes belonging to the network infrastructure. The distance measures are obtained, for example, through the \ac{rss} at anchor nodes for signals transmitted by the terminal to be verified.  This problem is closely related to the {\em user authentication} at the physical layer, where the channel features are exploited to verify the sender of a message over a wireless channel \cite{7270404}.
+Location verification systems aim at verifying the position of devices in a mobile communication network, with applications in sensor networks \cite{Zeng-survey, 8376254}, the Internet of Things \cite{7903611}, and geo-specific encryption solutions \cite{quaglia}. Various approaches have been proposed for location verification, typically based on the measurement of the distance between the transmitter and other users  or  anchor nodes belonging to the network infrastructure. The distance measures are obtained, for example, through the \ac{rss} at anchor nodes for signals transmitted by the terminal to be verified.  This problem is closely related to the {\em user authentication} at the physical layer, where the channel features are exploited to verify the sender of a message over a wireless channel \cite{7270404}.
 
-In this paper, we focus on the {\em in-region} location verification problem, i.e., the problem of deciding if a message coming from a terminal over a wireless network has been originated from a specific physical area (e.g., a safe room) or not \cite{quaglia}. This can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays.  
+We focus here on the \ac{irlv} problem, i.e., the problem of deciding if a message coming from a terminal over a wireless network has been originated from a specific physical area, e.g., a safe room, or not \cite{Zeng-survey}. \ac{irlv} can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays.  
 
-In this paper, we consider the location verification problem exploiting the features of the channel over which the transmission occurs with respect to a set of network access points which can be seen as a location-verification system. We start from the observation that as an hypothesis testing problem, the most powerful test for a given significance for \ac{irlv} is provided by the \ac{np} lemma \cite{Neyman289}, i.e., the test providing the minimum \ac{md} probability for a given \ac{fa} probability. We derive closed-form expressions for the \ac{np} test for a simple channel model and simple access point configuration. Then, we observe that for more complicated situations the closed-form solution may not be available. Moreover,  channel impairments that affect the measurements may not be known statistically, as they may depend on random unknown phenomena as shadowing and fading. We therefore propose here to use a \ac{ml} approach where i) first data are collected by trusted nodes both inside and outside the region of interest, ii) then a model is trained to take decisions between the two hypothesis before deployment as tester. \ac{ml} techniques have already found application in the user authentication problem (see  \cite{pei2014channel, tian2015robust,Wang-17, xiao-2018, }). However, \ac{ml} solutions have never been applied before to the \ac{irlv} problem to the best of authors' knowledge. 
+In this paper, we consider the \ac{irlv} problem for a \ac{ue} connected to a set of network \acp{bs}. We first observe that the  \ac{np} lemma \cite{Neyman289} provides the optimal solution to the \ac{irlv} hypothesis testing problem by providing  the test with the minimum \ac{md} probability for a given \ac{fa} probability. For more complex situations (including more elaborate channel impairments) the \ac{np} test could be implemented, and we propose instead a \ac{ml} approach  where i) first channel measurements are collected by trusted nodes both inside and outside the region of interest, ii) then a model is trained to take decisions between the two hypothesis before deployment as tester. \ac{ml} techniques have already found application in the user authentication problem (see  \cite{xiao-2018} and references therein). However, \ac{ml} solutions have never been applied before to the \ac{irlv} problem to the best of authors' knowledge. 
 
-Firstly, we discuss the design of the \ac{ml} solutions; secondly, we show by simulations that the \ac{roc} of the \ac{ml} detector converges to that of the \ac{np} test as the complexity of the machine grows in terms of number of neurons and the number of training points goes to infinity. Then, we address the problem of optimum positioning of the \acp{bs} that provides the data over which the test is performed. Two metrics are considered: the minimum value obtained by the training cost function and the \ac{auc} of the \ac{roc}. Both are known to provide a single-number indication on how good the test is. In a simulation environment, a \ac{pso} solution is proposed to attractively update the position of the access points gradually increasing the target metrics until convergence to a local optimum. Multiple starting points are considered and the \ac{pso} is repeated in order to get closer to the global optimum position of the access points. We also show the relation between the two metrics, \ac{auc} and \ac{ce}, showing how both are function of the two test metrics, i.e., \ac{fa} and \ac{md} probabilities.
+Then, we address the problem of optimum positioning of the \acp{bs} (network planning) that provides the channel measurements over which the test is performed. Two metrics are considered: the \ac{ce} obtained in \ac{nn} training and the \ac{auc} of the \ac{roc}. We propose a two-stage \ac{pso} algorithm having as target first the  minimization of  the \ac{ce} and  the \ac{roc} \ac{auc} in the two stages. We also show the relation between the two metrics, \ac{auc} and \ac{ce}, showing how both are functions of the \ac{fa} and \ac{md} probabilities. Simulation results of the proposed solution over channels with shadow fading complete this work.
 
-% The rest of the paper is organized as follows. In Sec. \ref{sec:sys model} we describe the system and channel model and we derive the closed-form solution of the \ac{llr} for a simplified scenario. In Sec. \ref{sec: ml} we describe the \ac{ml} approach to \ac{irlv} by briefly reviewing the \ac{nn} and the \ac{svm} and showing their application to our problem. In Sec. \ref{sec:bsPos} we discuss the \acp{bs} positioning problem and we show how \ac{ml} can be used to solve it. Lastly, in Sec. \ref{sec: nr} we present numerical results showing the effectiveness of the proposed solutions for both \ac{irlv} and \ac{bs} positioning.
+%The rest of the paper is organized as follows. In Section \ref{sec:sys model} we describe the system and channel model. Section \ref{sec: ml} describes the optimal \ac{np} solution and the \ac{ml} solution to \ac{irlv}. In Section \ref{sec:bsPos} we discuss the \acp{bs} positioning problem and we show how \ac{ml} can be used to solve it. In Section \ref{sec: nr} we present numerical results showing the effectiveness of the proposed solutions for both \ac{irlv} and \ac{bs} positioning, before conclusions outlined in Section \ref{sec:conc}.
 
 %Network planning, i.e., designing optimal \acp{bs}' layout maximizing a chosen metric, has been studied in the literature in the context of \ac{wsn} \cite{bogdanov2004power} \cite{akkaya2007positioning} and cellular systems \cite{mathar2001optimal} \cite{glasser2005complexity}  \cite{islam2012capacity} \cite{yangyang2004particle}. In \cite{bogdanov2004power} the sensors network is optimized using as metric the rate of transmission between nodes. The resulting optimization is then solved using two heuristic iterative algorithms, since the problem is NP-complete. For a comparison between other proposed approaches and metric choices for \ac{wsn}, see \cite{akkaya2007positioning}. For what concerns cellular systems, in \cite{mathar2001optimal} and \cite{islam2012capacity} the chosen metrics are, respectively, the number of connected users and the cumulative channel capacities. For both these works the solving tools are taken from the integer and mixed-integer programming literature. In \cite{yangyang2004particle}, instead, \ac{pso} is used to optimize \acp{bs}' position w.r.t coverage and deployment costs (proportional to  the number of \acp{bs}).
 %To the best of authors' knowledge there are no literature examples of \acp{bs} positions planning that seek to optimize physical layer authentication performance.
@@ -87,108 +90,123 @@ Firstly, we discuss the design of the \ac{ml} solutions; secondly, we show by si
 \section{System Model}\label{sec:sys model}
 
 
-We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from within an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The location dependency of the features of the channel between the \ac{ue} and the \acp{bs} is exploited to distinguish between a transmission from $\mathcal{A}_0$ and a transmission from the complementary region $\mathcal{A}_1=\mathcal{A} \setminus \mathcal{A}_0$. We consider here a narrowband transmission and we focus on the power received by the \acp{bs} upon \ac{ue} transmission.
+We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from inside an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The location dependency of the channel between the \ac{ue} and the \acp{bs} is exploited to distinguish between transmissions from inside $\mathcal{A}_0$ and outside of it, i.e., from  $\mathcal{A}_1=\mathcal{A} \setminus \mathcal{A}_0$.  Transmission is assumed to be narrowband and the channel feature used for \ac{irlv} is the attenuation introduced by the channel.
 
-The location authentication procedure is composed by two phases. In the first phase (authentication identification) the \ac{ue} transmits a training signal (known at the \acs{bs}) from various points within region $\mathcal{A}_0$, and the \acp{bs} estimates the attenuation value incurred by the transmitted signal and store them in association with $\mathcal{A}_0$. Some external authentication technique must be added in this phase in order to ensure that the \ac{ue} is transmitting from region $\mathcal{A}_0$. Similarly, the \ac{ue} transmits a training signal from the complementary area $\mathcal{A}_1$ and the \acp{bs} estimate the attenuation value and store them in association to $\mathcal{A}_1$. In the second phase (authentication verification), the \ac{ue} transmits a known training sequence from any points in $\mathcal{A}$, and the \acp{bs} must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
+The \ac{irlv} procedure comprises two phases. In the first phase, named identification, the \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$,  the \acp{bs} estimates the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted from region $\mathcal{A}_0$ at the nominal power. Similarly, attenuation values are collected when the \ac{ue} transmits  from the complementary area $\mathcal{A}_1$ and  stored by the \ac{bs} in association to $\mathcal{A}_1$. In the second  phase, named verification, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \acp{bs} must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
 
 % The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
 
 \subsection{Channel Model}
 
-Consider a network with $N_{\rm AP}$. We denote as $\bm{x}_{\rm bs}^{(n)} =(X_{\rm bs}^{(n)},Y_{\rm bs}^{(n)})$ the position of the $n^{\rm th}$ \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is
-\begin{equation}
-    L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)}) = \sqrt{(X_{\rm bs}^{(n)}-X_u)^2+(Y_{\rm bs}^{(n)}-Y_u)^2}.
-\end{equation}
-When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n^{\rm th}$ \ac{bs} is
+We denote as $\bm{x}_{\rm ap}^{(n)} =(X_{\rm ap}^{(n)},Y_{\rm ap}^{(n)})$ the position of the $n$-th \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is denoted as $L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})$. When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n$-th \ac{bs} is
 \begin{equation}\label{eq: rec pow}
     P_{\rm rc}^{(n)}= \frac{P_{\rm tx}}{a^{(n)}},
 \end{equation}
-where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss, shadowing and fading. Denoting the path-loss coefficient as $P_{\ell}^{(n)}$ and as $s \sim \mathcal{N}(0,\sigma_s^2)$ the shadowing component we can define the fading power as $\sigma_{a,n}^2={P_{\ell}^{(n)}}e^{s}$. The fading realization is hence a zero mean $\sigma_{a,n}^2$ Gaussian random variable, i.e.,
-\begin{equation}
-    \sqrt{a^{(n)}} \sim \mathcal{N}\left(0,\sigma_{a,n}^2\right),
-\end{equation}
+where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss and shadowing. Denoting the path-loss coefficient as $P_{\ell}^{(n)}$  the shadowing component is $a^{(n)} \sim \mathcal{N}(0,\sigma_s^2)$.
 
 The channel model for path loss and shadowing is derived from \cite{3gpp}. For a \ac{los} link the path loss coefficient in dB is modelled as
 \begin{equation}\label{eq:los}
-    P_{\ell,LOS}^{(n)} = 20\log_{10}\left(\frac{f 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{c}\right),
+    P_{\ell,LOS}^{(n)} = 20\log_{10}\left(\frac{f 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{c}\right),
 \end{equation}
-where $f$ is the carrier frequency and $c$ is the speed of light.
-
-For a  non-\ac{los} link the path loss coefficient in dB is defined as
+where $f$ is the carrier frequency and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    P_{\ell, nLOS}^{(n)} = 40\left(1-4\times 10^{-3}\times h_{\rm BS}\right) \log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm bs}^{(n)})}{10^3}\right ) \\
-    -18\log_{10}h_{\rm BS}
+    P_{\ell, nLOS}^{(n)} = 40\left(1-4 \cdot 10^{-3}  h_{ap}\right) \log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right ) \\
+    -18\log_{10}h_{\rm ap}
     + 21\log10\left(\frac{f}{10^6}\right) + 80,
     \end{split}
 \end{equation}
-where $h_{\rm SB}$ is the \ac{bs} antenna elevation.
+where $h_{\rm ap}$ is the \ac{bs} antenna elevation.
 
-We assume that shadowing $s$ has  Gaussian distribution with zero-mean and $\sigma_s^2$ variance and its correlation between points $\bm{x}_i$ and $\bm{x}_j$ is
+We assume that shadowing correlation between points $\bm{x}_i$ and $\bm{x}_j$ is
 \begin{equation}\label{eq: coor mat}
-    \bm{\Sigma}_{(i,j)} = \sigma_s^2e^{-\frac{d}{d_c}},
+    \bm{\Sigma}_{(i,j)} = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
 \end{equation}
-where $d_c$ is the shadowing decorrelation distance and $d$ is the distance between $\bm{x}_i$ and $\bm{x}_j$. 
+where $d_c$ is the shadowing decorrelation distance. 
 
-\subsection{LOS Case}
-Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider the legitimate area $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The non-legitimate area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
 
-In the \ac{los} scenario the attenuation incurred by a \ac{ue} only depends on its relative distance to the \ac{bs}. We can here compute the closed form \ac{llr} of the region dependent attenuation value probabilities $p(\bm{a}|\mathcal{H}_i)$ as
+\section{In-region Location Verification}\label{sec: ml}
+
+ \begin{equation}
+\begin{split}
+  \mathcal H_0: \mbox{the \ac{ue} is in $\mathcal{A}_0$} \\
+  \mathcal H_1: \mbox{the \ac{ue} is in $\mathcal{A}_1$}. 
+  \end{split}
+\end{equation}
+
+During the identification phase a trusted \ac{ue} transmits a training signal with known transmit power from $S$ positions, some inside and other outside the area $\mathcal A_0$. The corresponding $S$ attenuation vectors are noted as $\bm{a}^{(i)}, \ i=1,\dots S$, while for position $i$, $t_i=1$ if \ac{ue} is in $\mathcal A_1$ and we define $t_i=0$ if \ac{ue} is in $\mathcal A_0$. We collect all the $t_i$ values into the vector $\bm{t}=[t_1,...,t_S]$, which  represents the labels of the attenuation vectors.
+
+By using these training vectors and labels we aim at building a function
+\begin{equation}
+    \hat{t} = f(\bm{y}) \in \{0,1\}\,,
+\end{equation}
+that for an attenuation vector $\bm{y}$ determines if the \ac{ue} is in $\mathcal A_0$ ($\hat{t}=0$) or in $\mathcal A_1$ ($\hat{t}=1$).
+
+The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, $P_{\rm FA} ={\mathbb P}(\hat{t} =1 | \mathcal H_0)$ and  $P_{\rm MD}={\mathbb P}(\hat{t} = 0 | \mathcal H_1)$.
+
+\subsection{Detector for Known Attenuation Statistics}
+
+The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr} of the attenuation vector
 \begin{equation}\label{eq:lr}
-    \mathcal{L}^{(\bm{a})}=\log\left(\frac{p(\bm{a}|\mathcal{H}_0)}{p(\bm{a}|\mathcal{H}_1)}\right).
+    \mathcal{L}^{(\bm{y})}=\log\left(\frac{p(\bm{y}|\mathcal{H}_0)}{p(\bm{y}|\mathcal{H}_1)}\right)\,,
 \end{equation}
+where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} of observing $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
+\begin{equation}
+    \hat{t} = f(\bm{y}) = \begin{cases}
+    0 & \mathcal{L}^{(\bm{y})} \geq \theta\,, \\ 
+    1 & \mathcal{L}^{(\bm{y})} < \theta\,, 
+    \end{cases}
+\end{equation}
+where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa} probability. This test ensures that for the give \ac{fa} probability the \ac{md} probability is minimized. 
 
-Consider a transmitting \ac{ue} located at a distance $R_0$ from the \ac{bs}. The probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$ is
+\subsection{Example of \ac{np} Test}
+\label{sec:los}
+We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm{y})$. 
+
+Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
+
+In the \ac{los} scenario the attenuation incurred by a \ac{ue} only depends on its relative distance to the \ac{bs}, therefore instead of considering $p(y|\mathcal H_i)$ we consider $p(R_0|\mathcal H_i)$, where $R_0$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. In order to obtain this \ac{pdf} we first note obtain the \ac{cdf} at $R_0$ of the distance from center, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$ is
 \begin{equation}\label{eq:cdf}
-     \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} R a(R) dR,
+     \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} R \alpha(R) dR,
 \end{equation}
-where $a(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$.
-
-By taking the derivative of (\ref{eq:cdf}) respect to $R_0$ we obtain the \ac{pdf} of a transmission from a distance $R_0$ located in $\mathcal{A}_0$ as
+where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
 \begin{equation}
-    p(R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}R_0a(R_0).
+    p(R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
 \end{equation}
-Following the same reasoning and considering that the length of the circular sector with radius $R_0$ located in $\mathcal{A}_1$ is $2\pi - a(R_0)$, we obtain the \ac{pdf} of transmission from a distance $R_0$ in $\mathcal{A}_1$ as
+Following the same reasoning and considering that the length of the circular sector with radius $R_0$ located in $\mathcal{A}_1$ is $2\pi - \alpha(R_0)$, we obtain the \ac{pdf} of transmission from a distance $R_0$ in $\mathcal{A}_1$ as
 \begin{equation}
-     p(R_0|\mathcal{A}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-a(R_0)\right).
+     p(R_0|\mathcal{A}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
 \end{equation}
-The closed form solution for (\ref{eq:lr}) is hence
+The \ac{llr} can then be written as 
 \begin{equation}
-    \mathcal{L}=\log\left(\frac{|\mathcal{A}_1|a(R_0)}{|\mathcal{A}_0|\left(2\pi-a(R_0)\right)}\right).
+    \mathcal{L}=\log\left(\frac{|\mathcal{A}_1|\alpha(R_0)}{|\mathcal{A}_0|\left(2\pi-\alpha(R_0)\right)}\right).
 \end{equation}
-This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
-
-
-\section{Classification via Machine Learning}\label{sec: ml}
-Denoting as $\bm{y}\in \mathcal{A}_n$ the attenuation vector generated from a \ac{ue} located in area $\mathcal{A}_{n}$, the objective is to obtain a machine implementing the following function
-\begin{equation}
-  \hat{t} =
-  \begin{cases}
-  0 \quad \text{if} \quad \bm{y} \in \mathcal{A}_0\\
-  1 \quad \text{if} \quad \bm{y} \in \mathcal{A}_1.
-  \end{cases}
-\end{equation}
-We assume that the authentication system has access to both regions $\mathcal{A}_0$ and $\mathcal{A}_1$ and that during the authentication phase $S$ attenuation vectors $\bm{a}^{(i)}, \ i=1,\dots S$,  belonging to both regions are collected. These values will then be used as input to the \ac{nn} in the learning phase. The vector $\bm{t}=[t_1,...,t_S]$ is defined as the vector of the labels of the attenuation vectors and will be used as training objective for the \ac{nn}.
-
-In order to test and compare the authentication systems, we define two error probabilities: the \ac{fa} probability, i.e. the probability  that a legitimate user is classified as non-legitimate $P_{\rm FA} =P(\hat{\mathcal H} = \mathcal H_1 | \mathcal H_0)$; the \ac{md} probability, i.e., the probability that a non-legitimate user is classified as legitimate, $P_{\rm MD}=P(\hat{\mathcal H} = \mathcal H_0 | \mathcal H_1)$.
+%This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
 \subsection{Neural Network Implementation}\label{sec:nn}
-A feed-forward neural network is a function of the type $\mathbb{R}^N \to \mathbb{R}^O$, that maps a set of $N$ real values into $O$ real values. The input is processed in stages, named layers, where the output of one layer is the input of the next layer.
 
-Layer $L-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ functions named neurons. The output of the $n^{\rm th}$ neuron of the $\ell^{\rm th}$ layer is
+For more complicated scenarios of attenuation statistics, it becomes hard to obtain close-form expressions of the \ac{llr}. Therefore we propose here to use a \ac{ml} approach, where in the identification phase a \ac{nn} is trained in order to classify the attenuation vectors $\bm{a}^{(i)}$ according to the labels $t_i$ and then the \ac{nn} is used on the test attenuation vectors $\bm{y}$ to provide the decision $\hat{t}$. Therefore the \ac{nn} implements the function $\hat{t} = f(\bm{y})$.
+
+A feed-forward \ac{nn} processes the input in stages, named layers, where the output of one layer is the input of the next layer. The input of the \ac{nn} is $\bm{y}^{(0)} = \bm{y}$, and layer $\ell-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ functions named neurons. The output of the $n$-th neuron of the $\ell$-th layer is
 \begin{equation}\label{eq:nonLin}
 y_n^{(\ell)} = \psi\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
 \end{equation}
-i.e., a mapping via an activation function $\psi$ of the weighted linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. We denote respectively as $\bm{y}^{(0)}$ and $y^{(L-1)}$ the input and the output of the \ac{nn}. 
-
-The \ac{nn} must be properly trained in order to perform classification, i.e., we must compute the optimal values for the vectors $\bm{w}_n^{(\ell)}$ and the scalars $b_n^{(\ell)}$. \ac{nn} training is performed via gradient descent minimizing the \ac{ce} defined as
-\begin{equation}\label{eq:ce}
-CE = -\sum_{i=1}^{S}\left(t_i\log\left(\tilde{y}_i\right)+\left(1-t_i\right)\log\left(1-\tilde{y}_i\right) \right),
+where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\psi(\cdot)$ is a fixed pre-determined activation function. The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. The output of the \ac{nn} is the scalar $y^{(L-1)}$. Finally, the test function is obtained by thresholding $y^{(L-1)}$, i.e.,
+\begin{equation}
+    f(\bm{y}) = \begin{cases}
+    1 & y^{(L-1)} > \lambda \\
+    0 & y^{(L-1)} \leq \lambda.
+    \end{cases}
 \end{equation}
-where $\tilde{y}_i$ denotes the output of the \ac{nn} given input $\bm{a}^{(i)}$.
+Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
 
-Since the output of the neural network $y^{(L-1)}$ is a continuous value in $[0,1]$, in order to perform classification, a suitable threshold value $\lambda$ must be chosen, such that the input vector $\bm{y}^{(0)}$ is classified as
-$\mathcal{H}_0$ if $y^{(L-1)} > \lambda$ and as $\mathcal{H}_1$ if $y^{(L-1)} \le \lambda$.
+Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$, i.e., we minimize
+\begin{equation}\label{eq:ce}
+CE = -\sum_{i=1}^{S}\left[t_i\log\left(\tilde{y}_i\right)+\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+\end{equation}
+where $\tilde{y}_i = f(\bm{a}^{(i)})$, $i=1, \ldots, S$. Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are adjusted via the gradient descent algorithm. 
+
+Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
 
 % \subsection{Support Vector Machine}\label{sec:svm}
 % A \ac{svm} \cite{Bishop2006} is a supervised learning model that can be used for classification and regression. We focus here on binary classification, i.e., we define the identification function as
@@ -218,78 +236,83 @@ $\mathcal{H}_0$ if $y^{(L-1)} > \lambda$ and as $\mathcal{H}_1$ if $y^{(L-1)} \l
 % While the feature-space transformation function is typically fixed, the vector $\mathbf{w}$ must be properly chosen to perform the desired classification
 
 
-\section{Optimization of APs Positions}\label{sec:bsPos}
+\section{Network Planning}\label{sec:bsPos}
 
+As the attenuation depends on the position of the \acp{bs} and on the surrounding environment, the performance of the authentication system depends on the number of \acp{bs} and on their location in space. In this section, we derive an approach to optimally position \acp{bs} (network planning) so that the authentication system attains the best performance. 
 
-
-As attenuation maps depend on the position of the \acp{bs} and on the surrounding environment in terms of shadowing effects, the performance of the authentication system depend on the number of \acp{bs} and on their location in the space. In this section, we derive an approach to optimally locate \acp{bs} so that the authentication system attains the best performance. 
-
-The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value. In order to solve this problem we focus on metrics independent from specific values of the $P_{\rm FA}$, i.e., that depend on the \ac{roc}, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$ values. In particular, we consider two metrics, i.e., the   \ac{roc} \ac{auc} \cite{hanley-82} and the \ac{ce}. 
+The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$ while capturing the whole behavior of the \ac{roc}, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. In particular, we consider two metrics, i.e., the   \ac{roc} \ac{auc} \cite{hanley-82} and the \ac{ce}. 
 
 We now describe the two metrics and highlight their relation, by showing how they  are related to the \ac{fa} and \ac{md} probability.
 
 \paragraph{Area Under the ROC Curve} The \ac{roc} \ac{auc} is defined as 
 \begin{equation}
-    K(\mathcal{X}) = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
+    K  = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
 \end{equation}
-where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a function of the $P_{\rm FA}$, which corresponds to the integral of the \ac{roc} function. By minimizing the \ac{auc}, we minimize the average \ac{md} probability for a uniform \ac{fa} probability\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}. 
+where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a function of the $P_{\rm FA}$, which corresponds to the integral of the \ac{roc} function. By minimizing the \ac{auc}, we minimize the average \ac{md} probability for a uniform \ac{fa} probability
+%\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
+. However, note that in order to compute the \ac{auc} we must run the \ac{nn} over a set of test attenuation vectors multiple times with different threshold in order to reconstruct the \ac{roc} and compute a numerical approximation of its integral.
 
-\paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{kl} divergence. Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
+\paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities. Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
 \begin{equation}
-\mathbb D(p_t; p_{\hat{t}}) = P_{\rm MD} \log \frac{P_{\rm MD}}{1 - P_{\rm FA}} + (1-P_{\rm MD})\log \frac{1- P_{\rm MD}}{P_{\rm FA}}.
+\mathbb D(p_t; p_{\hat{t}}) = P_{\rm MD} \log \frac{P_{\rm MD}}{1 - P_{\rm FA}} + (1-P_{\rm MD})\log \frac{1- P_{\rm MD}}{P_{\rm FA}}\,,
 \label{KLb}
 \end{equation}
-Note that although also this \ac{kl} divergence is written in terms of \ac{fa} and \ac{md} probabilities, we can not immediately compare it with the \ac{auc}. However, we can establish a close relation between this metric (still defined in terms of error probabilities) with the \ac{ce} between $t$ and $\tilde{y}$ that is used for \ac{nn} training. In fact, since $\hat{t}$ is obtained by $\tilde{y}$, by the data processing inequality we have (see also \cite{Tomasin-Ferrante}) that {\em for any thresholding of $\tilde{y}$}
+where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$. Now, since $\hat{t}$ is obtained by $\tilde{y}$, by the data processing inequality we have (see also \cite{Tomasin-Ferrante}) that {\em for any thresholding of $\tilde{y}$}
 \begin{equation}
 \mathbb D(p_t; p_{\hat{t}}) \leq \mathbb D(p_t; p_{\tilde{y}})\,.
 \end{equation}
-Therefore, the right term of the inequality can be seen as a synthetic metric of the test, irrespective of the optimization of the threshold, i.e., of a specific target \ac{fa} probability. The \ac{auc} is also another synthetic description irrespective of the specific thresholding. Now let us establish the connection between \ac{fa} and \ac{md} probabilities and \ac{ce}. The \ac{ce} used for \ac{nn} optimization (\ref{eq:ce})  can also written as 
+Therefore, the right term of the inequality is  a synthetic metric of the test, irrespective of the optimization of the threshold, i.e., of a specific target \ac{fa} probability. The \ac{auc} is also another synthetic description irrespective of the specific thresholding. Now let us establish the connection between \ac{fa} and \ac{md} probabilities and \ac{ce}. The \ac{ce} used for \ac{nn} optimization (\ref{eq:ce})  can also written as 
 \begin{equation}
-\mathbb H(p_t,p_{\tilde{y}}) = H(p_t,p_{\tilde{y}}) +\mathbb D(p_t; p_{\tilde{y}})\,,
+\mathbb H(p_t,p_{\tilde{y}}) = \mathbb H(p_t,p_{\tilde{y}}) +\mathbb D(p_t; p_{\tilde{y}})\,,
 \label{dpi}
 \end{equation}
-where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$, $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the \ac{kl} divergence. Therefore by  adding $\mathbb H(p_t)$ to both terms in (\ref{dpi}) we have 
+where $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the \ac{kl} divergence. Therefore by  adding $\mathbb H(p_t)$ to both terms in (\ref{dpi}) we have 
 \begin{equation}
 \mathbb H(p_t) +\mathbb  D(p_t; p_{\hat{t}}) \leq \mathbb H(p_t,p_{\tilde{y}})\,. 
 \end{equation}
-Since the entropy of $t$ is the same for all testing techniques, maximizing the \ac{ce} is equivalent to maximizing an upper bound on the \ac{kl} divergence between $t$ and $\hat{t}$, which can be written as a function of \ac{fa} and \ac{md} probabilities by (\ref{KLb}). This justifies the use of the \ac{ce} as a metric for the optimization of the \ac{bs} position.
+Since the entropy of $t$ is the same for all testing techniques, minimizing the \ac{ce} is equivalent to minimizing an upper bound on the \ac{kl} divergence between $t$ and $\hat{t}$, which can be written as a function of \ac{fa} and \ac{md} probabilities by (\ref{KLb}). This justifies the use of the \ac{ce} as a metric for the optimization of the \ac{bs} position.
 
 \subsection{Particle Swarm Optimization}
-In order to solve the \acp{bs} positioning problem we exploit the \ac{pso} \cite{Kennedy-11}, i.e., an iterative optimization algorithm based on social behavior of animals (e.g. birds flocking and fish schools). Consider a particle as a set of positions for the \acp{bs} and consider a total number of $P$ particles. Each one is a possible candidate solution of the optimization problem and is described by its position $\bm{x}_p$, which is a $N_{\rm AP} \times 2$ dimensional vector of the coordinates of each \ac{bs} over the plane, and its velocity $\bm{v}_p$.
-Starting from a random position for all the particles, at each iteration both the positions $\bm{x}_p$ and the velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimal value found so far by the entire population and a local optimal value for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration.
 
-The position and velocity of the particles are updated at iteration $\ell$ as
+In order to solve the \acp{bs} positioning problem we exploit the \ac{pso} \cite{Kennedy-11}, briefly recalled here.
+ 
+\ac{pso} is an iterative optimization algorithm based on social behavior of animals, e.g., birds flocking and fish schools. Consider a total number of $P$ particles, where  particle $p=1, \ldots P$, is described by a vector of \acp{bs} positions $\bm{x}_p = [\bm{x}_{\rm ap}^{(1)}(p),\ldots, \bm{x}_{\rm ap}^{(N_{\rm ap})}(p)]$ and by its velocity $\bm{v}_p$.  Each particle is a candidate solution of the optimization problem. 
+
+Starting from a random position for all the particles, at each iteration both  positions $\bm{x}_p$ and  velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimal value found so far by the entire population and a local optimal value for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration. According to the chosen objective function, the optimal values are those minimizing either the \ac{roc} \ac{auc} or  the \ac{ce}.
+
+The position and velocity of the particles are updated at iteration $\ell$ as \cite{Kennedy-11}
    \begin{equation}\label{eq: v up}
 \begin{split}
-  \bm{v}_p(\ell) = w\bm{v}_p(\ell-1)+\phi_1(\ell)(\bm{o}_p(\ell-1)-\\
+  \bm{v}_p(\ell) = \omega \bm{v}_p(\ell-1)+\phi_1(\ell)(\bm{o}_p(\ell-1)-\\
   -\bm{x}_p(\ell-1))+\phi_2(\ell)(\bm{o}_g(\ell-1)-\bm{x}_p(\ell-1));
   \end{split}
   \end{equation}
   \begin{equation}\label{eq: p up}
   \bm{x}_p(\ell) = \bm{x}_p(\ell-1) + \bm{v}_p(\ell);
  \end{equation}
-where $w$ is the inertia coefficient and $\phi_1$ and $\phi_2$ are random variables distributed respectively in $[0,c_1]$ and $[0,c_2]$, where $c_1$ and $c_2$ are defined as acceleration constants. The values of the inertia coefficient and of the acceleration constants are the parameters of the \ac{pso} problem.
+where $\omega$ is the inertia coefficient and $\phi_1$ and $\phi_2$ are random variables uniformly distributed in $[0,c_1]$ and $[0,c_2]$, respectively, where $c_1$ and $c_2$ are defined as acceleration constants. The values of the inertia coefficient and of the acceleration constants are the parameters of the \ac{pso} problem.
 
 \subsection{PSO-Based Network Planning}
 
-The best solution in terms of \ac{irlv} performance is obtained by selecting as objective function for \ac{pso} the \ac{auc}. However, as before stated, this requires that the \ac{nn} must also be tested for each particle position in order to compute the \ac{auc}. This operation requires an additional computational complexity that can be expressed as
+As we have seen the \ac{roc} \ac{auc} well describes the overall behavior of the \ac{roc} is widely recognized as a valid synthetic metric for hypothesis testing. The \ac{ce} represents instead only an upper bound on the \ac{kl} divergence, thus is less reliable and is not directly related to the \ac{auc}. On the other hand, computation of the \ac{auc} is complicated by the need of perform extensive testing, while the \ac{ce} is immediately provided by the \ac{nn} training process. 
+
+In particular, the testing needed to compute \ac{auc} has an additional complexity (with respect to training that must be performed anyway), of 
 \begin{equation}
-    \mathcal{C}_{\rm test} = P\left(\mathcal{C}_{\rm set} + \mathcal{C}_{\rm out}+\mathcal{C}_{\rm ROC}+\mathcal{C}_{\rm AUC}\right),
+    \mathcal{C}_{\rm test} = P \left( \mathcal{C}_{\rm out}+\mathcal{C}_{\rm ROC}+\mathcal{C}_{\rm AUC}\right),
 \end{equation}
-where $\mathcal{C}_{\rm set}$ represents the time needed to build the testing set, $\mathcal{C}_{\rm out}$ denotes the time needed to get the output of the \ac{ml} algorithm, $\mathcal{C}_{\rm ROC}$ denotes the time needed to build the \ac{roc} function and $\mathcal{C}_{\rm AUC}$ denotes the time needed to compute the \ac{auc} of the \ac{roc}.
-The \ac{nn} $\mathcal{C}_{\rm out}$ is given by the total number of multiplication and additions needed to compute the output value $y^{(L-1)}$ for all testing vectors, which is given by
+where  $\mathcal{C}_{\rm out}$ denotes the complexity associated to running the \ac{nn} on the test points, $\mathcal{C}_{\rm ROC}$ denotes the complexity of building the \ac{roc} function and $\mathcal{C}_{\rm AUC}$ denotes the complexity of integrating the \ac{roc}. The \ac{nn} running cost $\mathcal{C}_{\rm out}$ is given by the total number of multiplication and additions needed to compute the output value $y^{(L-1)}$ for all testing vectors, i.e.,
 \begin{equation}
-    \mathcal{C}_{\rm out} = \left(2N_{\rm AP}N_{\rm h}++2N_{\rm h}^2N_{\rm L} + 2N_{\rm h}\right)t,
+    \mathcal{C}_{\rm out} = \left(2N_{\rm AP}N_{\rm h}+2N_{\rm h}^2N_{\rm L} + 2N_{\rm h}\right)\tau ,
 \end{equation}
-where $N_{\rm h}$ is the number of neurons in the hidden layer, $N_{\rm L}$ is the number of hidden layers and $t$ is the size of the testing set.
-The computation of the \ac{roc} curve requires the estimation of the $P_{\rm FA}$ and $P_{\rm MD}$ values for each threshold value $\lambda$, whereas the computation of the \ac{auc} requires, whereas $\mathcal{C}_{\rm AUC}$ requires the numerical integration of the \ac{roc} curve over $P_{\rm FA}$ values.
+where $N_{\rm h}$ is the number of neurons in the hidden layer, $N_{\rm L}$ is the number of hidden layers and $\tau$ is the size of the testing set.
+The computation of the \ac{roc} curve requires the estimation of the $P_{\rm FA}$ and $P_{\rm MD}$ values for each threshold value $\lambda$, whereas the computation of the \ac{auc} requires the numerical integration of the \ac{roc} curve over $P_{\rm FA}$ values.
 
-Since we showed that the \ac{ce} is linked to the \ac{auc}, we propose to reduce the computational complexity of the positioning algorithm by firstly setting as optimization metric the \ac{ce} and to update the global optimum until it converges. Then \ac{pso} proceeds by using the \ac{auc} as objective function in order to further optimize the performance of the authentication system.
+In order to reduce the complexity of the \ac{pso} algorithm and still approximate the optimal solution in terms of the \ac{auc} metric we propose to split the \ac{pso} algorithm into two stages: for a first round of iterations the position of the \acp{bs} is moved by minimizing the \ac{ce}, and starting from the results of these iterations a second round  of iterations is started, where we use the \ac{auc} as optimization function. 
+The proposed two-stage algorithm for \acp{bs} positioning is reported in Algorithm 1. We initialize $P$ particles with random positions for each of the $N_{\rm AP}$ \acp{bs} in each particle; we train the \ac{nn} and compute the \ac{ce} $\rm{CE}_p^{(0)}$ for each particle $p$. The global optimum value $\rm{CE}_g$ is set to the minimum among all $\rm{CE}_p^{(0)}$ values. Then, the positions and the velocities of the particles are updated via (\ref{eq: v up}) and (\ref{eq: p up}), and both the local and global optimum are updated according to the obtained values at the current iterations. When $\rm{CE}_g$ converges the chosen objective function is the \ac{auc} and all particles perform both training and testing of the \ac{nn}. The algorithm stops when the global optimum converges.
 
-The algorithm steps for \acp{bs} positioning are reported in Algorithm 1. We initialize $P$ particles with random positions for each of the $N_{\rm AP}$ \acp{bs} in each particle; we train the \ac{ml} algorithm and compute the achieved training metric value $\rm{CE}_p^{(0)}$ for each particle $p$. The global optimum vale $\rm{CE}_g$ is set to the minimum among all $\rm{CE}_p^{(0)}$ values. Then, the positions and the velocity of the particles are updated via (\ref{eq: v up}) and (\ref{eq: p up}) and both the local and global optimum are updated according to the obtained values at the current iterations. When $\rm{CE}_g$ converges the chosen objective function is the \ac{auc} and all particles perform both training and testing of the \ac{nn}. The algorithm stops when the global optimum converges.
+ \begin{algorithm}[b!]
 
- \begin{algorithm}[t]
-
+\small
 
   \KwData{ number of particles $P$, $N_{\rm AP}$}
   \KwResult{optimal position }
@@ -299,85 +322,103 @@ The algorithm steps for \acp{bs} positioning are reported in Algorithm 1. We ini
   $it = 0$\;
 
   \Repeat{convergence of $\rm{CE}_g$}{
-         $it = it + 1$\;
-         \For{$p=1,...,P$}{
+         $i = i + 1$\;
+         \For{$p=1,\ldots,P$}{
          update velocity and position vector of particle via (\ref{eq: v up}) and (\ref{eq: p up})\;
-                  train the \ac{nn} for each particle $\to$ $\rm{CE}_p^{(it)}$\;
-                  \If{$\rm{CE}_p^{(it)} < \rm{CE}_g$}{ $\rm{CE}_g = \rm{M}_p^{(it)}$ \;}
+                  train the \ac{nn} for each particle $\to$ $\rm{CE}_p^{(i)}$\;
+                  \If{$\rm{CE}_p^{(i)} < \rm{CE}_g$}{ $\rm{CE}_g = \rm{CE}_p^{(i)}$ \;}
          }
       
       }
       
       objective function $\to$ \ac{auc}\;
       $K_g = 1$\;
-      $it = 0$\;
+      $i = 0$\;
       \Repeat{convergence of $K_g$}{
-         $it = it + 1$\;
-         \For{$p=1,...,P$}{
+         $i = i + 1$\;
+         \For{$p=1,\ldots,P$}{
          update velocity and position vector of particle via (\ref{eq: v up}) and (\ref{eq: p up})\;
                   train the \ac{nn} for each particle \;
                   test the \ac{nn} $\to$
-                  $K_p^{(it)}$\;
-                  \If{$K_p^{(it)} < K_g$}{ $K_g = K_p^{(it)}$ \;}
+                  $K_p^{(i)}$\;
+                  \If{$K_p^{(i)} < K_g$}{ $K_g = K_p^{(i)}$ \;}
          }
       
       }
     
-\caption{BSs positioning algorithm}
+\caption{Proposed two-stage APs positioning algorithm.}
  \end{algorithm}
 
-Notice that, as the optimization problem is non-convex, solving \ac{pso} is similar to a multi-start optimization considering $P$ different starting points, which is a standard method used to avoid local minimum solutions. As the number $P$ increases the probability of resolving to a local solution is reduced.
+%Notice that, as the optimization problem is non-convex, solving \ac{pso} is similar to a multi-start optimization considering $P$ different starting points, which is a standard method used to avoid local minimum solutions. As the number $P$ increases the probability of resolving to a local solution is reduced.
 
 \section{Numerical Results}\label{sec: nr}
-\subsection{Comparison with the Optimal Classifier}
-Here, we compare the \ac{nn} solution with the optimal \ac{np} classifier obtained by setting a threshold $\lambda_{\rm NP}$ to discriminate \ac{llr} values, which classifies $\bm{a}$ as $\mathcal{H}_0$ if $\mathcal{L}^{(\bm{a})} > \lambda_{\rm NP}$ and as $\mathcal{H}_1$ if $\mathcal{L}^{(\bm{a})} \le \lambda_{\rm NP}$.
 
-Figure \ref{fig:NP_comp} shows the \ac{md} probability vs. the \ac{fa} probability of the \ac{nn} and of the optimal classifier obtained with the  \ac{np} criterion. In particular, it shows the performance of \acp{nn} with $N_L=3$ hidden layers and different number of neurons $N_h$ in the hidden layer. Results have been obtained for a \ac{nn} with sigmoid activation function at the hidden layer and $tanh$ activation function at the output layer. We used $q=10^6$ training points for the \ac{nn} and $u=10^6$ testing points. We see that the \ac{nn} classifier obtains the same performance of the optimal \ac{np}-based classifier for a sufficient number of neurons in the hidden layer. Based on this results, we henceforth consider the results obtained with the \ac{nn} as the optimal ones, neglecting the comparison with the \ac{np} criterion for scenarios where the distributions in (\ref{eq:lr}) are not available.
+We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \acp{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. A sigmoid activation function at the hidden layer and a tanh activation function at the output layer have been used, with $10^6$ training points  and $10^6$ testing points. 
 
+Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. We see even with a small number of neurons, in this simple problem the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is already an indication that the \ac{nn} with sufficiently long training and a large enough number of neurons achieves optimal performance. Further investigation on the connection between these two approaches are left for future  investigation.
+ 
  \begin{figure}[h]
      \centering
      \includegraphics[width=0.9\columnwidth]{FA_MD_LOS.eps}
-     \caption{$P_{\rm MD}$ vs. $P_{\rm FA}$ comparison between \ac{nn} with different number of neurons in the hidden layer and the optimal \ac{np} classifier. Results are reported for different number $N_h$ of neurons in the hidden layer.}
+     \caption{\ac{roc} of the \ac{np} test and the the proposed \ac{ml} test,  with different number of neurons in the hidden layer of the \ac{nn}.}
      \label{fig:NP_comp}
  \end{figure}
 
+ 
+In order to test the \ac{nn} approach in a more challenging scenario, we consider a network with $N_{\rm AP}=5$ \acp{bs}, each  characterized by a different  shadowing map, obtained with the model described in Section II, for a square area with two streets dividing the square into four quadrants with buildings, and the safe area $\mathcal A_0$  located in quadrant, inside the building.
 
-\subsection{Non-LOS Case}
-Here, we consider a network with $N_{\rm AP}=5$ \acp{bs}, each one gathering attenuation values of the signal transmitted by the \ac{ue} and collecting them in the attenuation vector $\bm{a}$. Each \ac{bs} is characterized by different attenuation and shadowing maps. Figure \ref{fig:trueMap} shows a realization of the path loss and shadowing map for a \ac{bs} located in the center of the area $\mathcal{A}$. We further assume that within $\mathcal{A}$ are present two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$. We define the legitimate area as the one contoured by the red line.
+%Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the area $\mathcal{A}$. 
+%We further assume that inside $\mathcal{A}$ there are  two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$, representing for example streets surrounded by buildings. We indicate region $\mathcal A_0$   by the red line.
 
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.9\columnwidth]{surfColorato.png}
-    \caption{Example of a realization of the attenuation map in the non-\ac{los} scenario considering only the shadowing effects.}
-    \label{fig:trueMap}
-\end{figure}
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=0.9\columnwidth]{surfColorato.png}
+%     \caption{Example of a realization of the attenuation map in the non-\ac{los} scenario considering only the shadowing effects.}
+%     \label{fig:trueMap}
+% \end{figure}
 
-Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{md} vs. \ac{fa} probabilities of the authentication system trained with $q = 10^1, 10^2, 10^3, 10^4, 10^5, 10^6$ and $u=10^7$ training points. Results have been obtained for a $N_L=3$ layer \ac{nn} with $N_h=6$ neurons in the hidden layer. We see that the average performance of the system increase with the number of training points up to $q=10^6$.
+Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} of the proposed \ac{nn} \ac{irlv} system  trained with various values of the number of training points $q$. Results have been obtained for a $N_L=3$ layer \ac{nn} with $N_h=6$ neurons in the hidden layer. We see that the \ac{auc} decreases when increasing the number of training points and that with $10^6$ the \ac{roc} does not change. With can achieve $P_{\rm FA}$ and $P_{\rm MD}$ both in the range $10^{-1}$ to $10^{-2}$.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.9\columnwidth]{mean_maps.eps}
-    \caption{Average $P_{\rm MD}$ vs. average $P_{\rm FA}$ of the authentication system trained with different number of attenuation vectors. $N_L=3$ layer \ac{nn} with $N_h=6$ neurons in the hidden layer.}
+    \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $q$ training points.}
     \label{fig:n_train}
 \end{figure}
 
-\subsection{\acp{bs} Positioning}
-We here consider the optimization algorithm shown in Alg. 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. We initialize the parameters of the \ac{pso} with the typical values $w=0.7298$, $c_1=c_2=1.4961$ \cite{Kennedy-11}. Results are averaged over different shadowing realizations. We consider a training set composed by $q=10^4$ points and a testing set of $u=10^3$ points.
+\subsection{Network Planning Performance}
 
-Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. In particular it compares the average \ac{auc} value obtained with \ac{ce} and with \ac{auc} objective function with that obtained with Algorithm 1. We see that the \ac{ce} solution reaches a minimum \ac{auc} value close to that obtained by the \ac{auc} solution. We instead notice that with Alg. 1 we obtain an average \ac{auc} which is lower than that obtained by the \ac{auc} solution with a small number of iterations and hence lower comutational cmplexity.
+We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. We initialize the parameters of the \ac{pso} as in \cite{Kennedy-11}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider a $10^4$ training  points and  $10^3$ testing points. We compare the performance of Algorithm 1 with two conventional \ac{pso} algorithms, using only the \ac{auc} or the \ac{ce} as optimization functions. The performance metric is the \ac{auc}.
 
-\begin{figure}[t]
+Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the proposed solution reaches the lowest value of \ac{auc} with respect to the other solution. Moreover, it also achieves the minimum with a lower number of iteration, thus with a lower complexity, as discussed in the previous section. Indeed, Algorithm 1 outperforms even the \ac{pso} with pure \ac{auc} target function, since in general the \ac{pso} does not achieve the optimal solution, but typically stops at locally optimal solutions. On the other hand, the \ac{pso} using only the \ac{ce} as target function shows the highest values of \ac{auc}. 
+
+ 
+Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce} as objective function in Algorithm 1. We note that in half of the cases only four iterations are performed using \ac{ce} and then the rest of the iterations are using the \ac{auc} as a target function. Since from Fig. \ref{fig:CEvsAUC} we note that in five  iterations Algorithm 1 is on average already quite close to convergence we can conclude that the number of iterations in the \ac{auc} stage is very small in most cases. This does not occur for the pure \ac{auc} solution, where a higher number of \ac{auc} iterations is needed to achieve convergence (see  Fig. \ref{fig:CEvsAUC}).
+%\balance
+\begin{figure} 
     \centering
     \includegraphics[width=0.9\columnwidth]{CE_vsAUC.eps}
-    \caption{Mean \ac{auc} vs. number of \ac{pso} iterations. Comparison between the \ac{auc} obtained with \ac{auc} as \ac{pso} objective, \ac{auc} obtained with \ac{ce} as \ac{pso} objective and \ac{auc} obtained with Algorithm 1. }
+    \caption{Mean \ac{auc} vs. the number of \ac{pso} iterations for Algorithm 1, and two \ac{pso} algorithms using only the  \ac{auc} and the \ac{ce} as objective functions. }
     \label{fig:CEvsAUC}
 \end{figure}
 
+\begin{figure} 
+    \centering
+    \includegraphics[width=0.9\columnwidth]{cdf.eps}
+    \caption{CDF of the number of iterations of the first stage of Algorithm 1. }
+    \label{fig:cdf}
+\end{figure}
+ 
 \section{Conclusions}
-In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and we proposed a \ac{ml} implementation for its solution. We We showed that the \ac{nn} implementation achieves the same performance of the optimal classifier based on \ac{np} lemma and we showed the effects of the training set size over the $P_{\rm MD}$ and $P_{\rm FA}$. We then proposed a \ac{ml} approach for the optimal positioning of the \acp{bs}, with the objective of optimizing the performance of the \ac{irlv} system. We proposed a \ac{nn}-based solution for the problem and we theoretically proved that the training loss function can be used as a proxy of the error probabilities of the system. We than showed by numerical results the effectiveness of the proposed solution, both in terms of \ac{irlv} and network planning.
+\label{sec:conc}
+%\balance
+
+In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and  proposed a \ac{ml}  solution. We showed that the \ac{nn} implementation achieves the same performance of the optimal  \ac{np} test for a simple case, and we assessed the effects of the training set size over the \ac{roc}. We then proposed a \ac{pso}  algorithm for the  optimal \ac{bs} positioning, establishing the connection of two objective functions with the \ac{roc}. We than showed by numerical results the effectiveness of the proposed solution in terms of \ac{auc} of the \ac{roc}.
+
+
 \renewcommand*{\bibfont}{\footnotesize}
 
 \printbibliography
-\balance
+
 \end{document}
