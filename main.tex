@@ -111,9 +111,9 @@ The channel model for path loss and shadowing is derived from \cite{3gpp}. For a
 where $f$ is the carrier frequency and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    P_{\ell, nLOS}^{(n)} = 40\left(1-4 \cdot 10^{-3}  h_{ap}\right) \log10\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right ) \\
+    P_{\ell, nLOS}^{(n)} = 40\left(1-4 \cdot 10^{-3}  h_{ap}\right) \log_{10}\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right ) \\
     -18\log_{10}h_{\rm ap}
-    + 21\log10\left(\frac{f}{10^6}\right) + 80,
+    + 21\log_{10}\left(\frac{f}{10^6}\right) + 80,
     \end{split}
 \end{equation}
 where $h_{\rm ap}$ is the \ac{bs} antenna elevation.
@@ -260,11 +260,11 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$. Now, since $\hat{t}$ is obtained by $\tilde{y}$, by the data processing inequality we have (see also \cite{Tomasin-Ferrante}) that {\em for any thresholding of $\tilde{y}$}
 \begin{equation}
 \mathbb D(p_t; p_{\hat{t}}) \leq \mathbb D(p_t; p_{\tilde{y}})\,.
+\label{dpi}
 \end{equation}
 Therefore, the right term of the inequality is  a synthetic metric of the test, irrespective of the optimization of the threshold, i.e., of a specific target \ac{fa} probability. The \ac{auc} is also another synthetic description irrespective of the specific thresholding. Now let us establish the connection between \ac{fa} and \ac{md} probabilities and \ac{ce}. The \ac{ce} used for \ac{nn} optimization (\ref{eq:ce})  can also written as 
 \begin{equation}
-\mathbb H(p_t,p_{\tilde{y}}) = \mathbb H(p_t,p_{\tilde{y}}) +\mathbb D(p_t; p_{\tilde{y}})\,,
-\label{dpi}
+\mathbb H(p_t,p_{\tilde{y}}) = \mathbb H(p_t) +\mathbb D(p_t; p_{\tilde{y}})\,,
 \end{equation}
 where $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the \ac{kl} divergence. Therefore by  adding $\mathbb H(p_t)$ to both terms in (\ref{dpi}) we have 
 \begin{equation}
