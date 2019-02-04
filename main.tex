@@ -49,8 +49,7 @@
 \newacronym{irlv}{IRLV}{in-region location verification}
 
 %\usepackage[autostyle]{csquotes}
-\usepackage[backend=biber,style=ieee]{biblatex}
-\bibliography{bibliography}
+%\usepackage[backend=biber,style=authoryear]{biblatex}
 
 
 \title{Location-Verification and Network Planning \\ via Machine Learning Approaches}
@@ -62,7 +61,7 @@
 \maketitle
 
 \begin{abstract}
-We consider the \ac{irlv} problem of deciding if a message coming from a \ac{ue} over a wireless network has been originated from a specific physical area (e.g., a safe room) or not. The detection process exploits the features of the channel over which the transmission occurs with respect to a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with channel features (in particular, noisy attenuation factors) collected by the \acp{bs} for various positions of the \ac{ue} both inside and outside the specific area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and its correct label. We propose a two-stage \ac{pso} algorithm having as target first the  minimization of  the \ac{ce} and  the \ac{roc} \ac{auc} in the two stages. Through simulations we show that for long training and \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
+We consider\let\thefootnote\relax\footnote{This work has been submitted to IEEE International Conference on Communications, 2019.} the \ac{irlv} problem of deciding if a message coming from a \ac{ue} over a wireless network has been originated from a specific physical area (e.g., a safe room) or not. The detection process exploits the features of the channel over which the transmission occurs with respect to a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with channel features (in particular, noisy attenuation factors) collected by the \acp{bs} for various positions of the \ac{ue} both inside and outside the specific area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and its correct label. We propose a two-stage \ac{pso} algorithm having as target first the  minimization of  the \ac{ce} and  the \ac{roc} \ac{auc} in the two stages. Through simulations we show that for long training and \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -417,8 +416,9 @@ Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce}
 In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and  proposed a \ac{ml}  solution. We showed that the \ac{nn} implementation achieves the same performance of the optimal  \ac{np} test for a simple case, and we assessed the effects of the training set size over the \ac{roc}. We then proposed a \ac{pso}  algorithm for the  optimal \ac{bs} positioning, establishing the connection of two objective functions with the \ac{roc}. We than showed by numerical results the effectiveness of the proposed solution in terms of \ac{auc} of the \ac{roc}.
 
 
-\renewcommand*{\bibfont}{\footnotesize}
+%\renewcommand*{\bibfont}{\footnotesize}
 
-\printbibliography
-
+%\printbibliography
+\bibliography{bibliography}
+\bibliographystyle{plain}
 \end{document}
