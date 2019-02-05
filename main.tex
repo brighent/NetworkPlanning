@@ -100,9 +100,12 @@ The \ac{irlv} procedure comprises two phases. In the first phase, named identifi
 
 We denote as $\bm{x}_{\rm ap}^{(n)} =(X_{\rm ap}^{(n)},Y_{\rm ap}^{(n)})$ the position of the $n$-th \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is denoted as $L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})$. When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n$-th \ac{bs} is
 \begin{equation}\label{eq: rec pow}
-    P_{\rm rc}^{(n)}= \frac{P_{\rm tx}}{a^{(n)}},
+    \left(P_{\rm rc}^{(n)}\right)_{\rm dB}= \left(P_{\rm tx}\right)_{\rm dB} - \left(a^{(n)}\right)_{\rm dB},
 \end{equation}
-where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss and shadowing. Denoting the path-loss coefficient as $P_{\ell}^{(n)}$  the shadowing component is $a^{(n)} \sim \mathcal{N}(0,\sigma_s^2)$.
+where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss and shadowing. Denoting the path-loss coefficient as $P_{\ell}^{(n)}$  the shadowing component is log-normally distributed $\left(s^{(n)}\right)_{\rm dB} \sim \mathcal{N}(0,\sigma_s^2)$ and
+\begin{equation}
+    \left(a^{(n)}\right)_{\rm dB} = \left(P_{\ell}^{(n)})\right)_{\rm dB} + \left(s^{(n)}\right)_{\rm dB}.
+\end{equation}
 
 The channel model for path loss and shadowing is derived from \cite{3gpp}. For a \ac{los} link the path loss coefficient in dB is modelled as
 \begin{equation}\label{eq:los}
@@ -165,21 +168,25 @@ We now describe an example of application of the \ac{np} test, where we can easi
 
 Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
 
-In the \ac{los} scenario the attenuation incurred by a \ac{ue} only depends on its relative distance to the \ac{bs}, therefore instead of considering $p(y|\mathcal H_i)$ we consider $p(R_0|\mathcal H_i)$, where $R_0$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. In order to obtain this \ac{pdf} we first note obtain the \ac{cdf} at $R_0$ of the distance from center, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$ is
+In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
+\begin{equation}
+    R = \frac{c a}{f 4 \pi}.
+\end{equation}
+Therefore instead of considering $p(y|\mathcal H_i)$ we consider $p(R_0|\mathcal H_i)$, where $R_0$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. In order to obtain this \ac{pdf} we first note obtain the \ac{cdf} at $R_0$ of the distance from the \ac{bs}, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$ is
 \begin{equation}\label{eq:cdf}
-     \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} R \alpha(R) dR,
+     \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
 \end{equation}
 where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
-\begin{equation}
-    p(R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
+\begin{equation}\label{eq:num}
+    p_{R|\mathcal{A}_0}(R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
 \end{equation}
 Following the same reasoning and considering that the length of the circular sector with radius $R_0$ located in $\mathcal{A}_1$ is $2\pi - \alpha(R_0)$, we obtain the \ac{pdf} of transmission from a distance $R_0$ in $\mathcal{A}_1$ as
-\begin{equation}
-     p(R_0|\mathcal{A}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
+\begin{equation}\label{eq:den}
+     p_{R|\mathcal{A}_1}(R_0|\mathcal{A}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
 \end{equation}
-The \ac{llr} can then be written as 
+From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
-    \mathcal{L}=\log\left(\frac{|\mathcal{A}_1|\alpha(R_0)}{|\mathcal{A}_0|\left(2\pi-\alpha(R_0)\right)}\right).
+    \mathcal{L}(a)=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c a}{f 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c a}{f 4 \pi})\right)}\right).
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
@@ -278,7 +285,7 @@ In order to solve the \acp{bs} positioning problem we exploit the \ac{pso} \cite
  
 \ac{pso} is an iterative optimization algorithm based on social behavior of animals, e.g., birds flocking and fish schools. Consider a total number of $P$ particles, where  particle $p=1, \ldots P$, is described by a vector of \acp{bs} positions $\bm{x}_p = [\bm{x}_{\rm ap}^{(1)}(p),\ldots, \bm{x}_{\rm ap}^{(N_{\rm ap})}(p)]$ and by its velocity $\bm{v}_p$.  Each particle is a candidate solution of the optimization problem. 
 
-Starting from a random position for all the particles, at each iteration both  positions $\bm{x}_p$ and  velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimal value found so far by the entire population and a local optimal value for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration. According to the chosen objective function, the optimal values are those minimizing either the \ac{roc} \ac{auc} or  the \ac{ce}.
+Starting from a random position for all the particles, at each iteration both  positions $\bm{x}_p$ and  velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimum found so far by the entire population and a local optimum for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration. According to the chosen objective function, the optimal values are those minimizing either the \ac{roc} \ac{auc} or  the \ac{ce}.
 
 The position and velocity of the particles are updated at iteration $\ell$ as \cite{Kennedy-11}
    \begin{equation}\label{eq: v up}
