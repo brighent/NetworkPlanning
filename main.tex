@@ -48,6 +48,9 @@
 \newacronym{wsn}{WSN}{wireless sensor network}
 \newacronym{irlv}{IRLV}{in-region location verification}
 
+\newcommand{\cross}{H_{p_t}(p_{\mathcal{H}_0|\bf y})}
+\newcommand{\hatcross}{\hat{H}_{p_t}(p_{\mathcal{H}_0|\bf y})}
+
 %\usepackage[autostyle]{csquotes}
 \usepackage[backend=biber,style=ieee]{biblatex}
 \bibliography{bibliography}
@@ -202,7 +205,7 @@ Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} pr
 
 Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$. An estimate of the \ac{ce} over the $S$ training points is 
 \begin{equation}\label{eq:ce}
-CE = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y} +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+\hatcross = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y} +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
 \end{equation}
 where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are adjusted via the gradient descent algorithm. 
 
