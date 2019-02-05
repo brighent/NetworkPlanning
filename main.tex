@@ -200,11 +200,11 @@ where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determine
 \end{equation}
 Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
 
-Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$, i.e., we minimize
+Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$. An estimate of the \ac{ce} over the $S$ training points is 
 \begin{equation}\label{eq:ce}
-CE = -\sum_{i=1}^{S}\left[t_i\log\left(\tilde{y}_i\right)+\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+CE = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y} +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
 \end{equation}
-where $\tilde{y}_i$, $i=1, \ldots, S$ is the soft output corresponding the $i^{\rm th}$  training point. Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are adjusted via the gradient descent algorithm. 
+where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are adjusted via the gradient descent algorithm. 
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
 
@@ -389,7 +389,7 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} 
 
 \subsection{Network Planning Performance}
 
-We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. We initialize the parameters of the \ac{pso} as in \cite{Kennedy-11}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. We compare the performance of Algorithm 1 with two conventional \ac{pso} algorithms, using only one optimization metric between \ac{auc} and \ac{ce}. The overall performance metric is the \ac{auc}.
+We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. Though there exists a variety of implementations of the \ac{pso} the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. We compare the performance of Algorithm 1 with two conventional \ac{pso} algorithms, using only one optimization metric between \ac{auc} and \ac{ce}. The overall performance metric is the \ac{auc}.
 
 Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the proposed solution reaches the lowest value of \ac{auc} with respect to the other solution. Moreover, it also achieves the minimum with a lower number of iteration, thus with a lower complexity, as discussed in the previous section. Indeed, Algorithm 1 outperforms even the \ac{pso} with pure \ac{auc} target function, since in general the \ac{pso} does not achieve the optimal solution, but typically stops at locally optimal solutions. On the other hand, the \ac{pso} using only the \ac{ce} as target function shows the highest values of \ac{auc}. 
 
@@ -405,7 +405,7 @@ Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce}
 
 \begin{figure} 
     \centering
-    \includegraphics[width=0.9\columnwidth]{cdf.eps}
+    \includegraphics[width=0.9\columnwidth]{cdf_bar.eps}
     \caption{CDF of the number of iterations of the first stage of Algorithm 1. }
     \label{fig:cdf}
 \end{figure}
