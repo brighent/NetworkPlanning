@@ -10,7 +10,7 @@
 \usepackage{amssymb}
 \usepackage{balance}
 \usepackage{bm}
-%\usepackage{color,soul}
+\usepackage{color,soul}
 %\usepackage{epstopdf}
 \usepackage[acronym,shortcuts]{glossaries}
 \usepackage{graphicx}
@@ -49,7 +49,7 @@
 \newacronym{irlv}{IRLV}{in-region location verification}
 
 \newcommand{\cross}{H_{p_t}(p_{\mathcal{H}_0|\bf y})}
-\newcommand{\hatcross}{\hat{H}_{p_t}(p_{\mathcal{H}_0|\bf y})}
+\newcommand{\hatcross}{\hat{H}(p_t,p_{\mathcal{H}_0|\bf y})}
 
 %\usepackage[autostyle]{csquotes}
 \usepackage[backend=biber,style=ieee]{biblatex}
@@ -201,8 +201,11 @@ A feed-forward \ac{nn} processes the input in stages, named layers, where the ou
 \begin{equation}\label{eq:nonLin}
 y_n^{(\ell)} = \psi\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
 \end{equation}
-where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\psi(\cdot)$ is a fixed pre-determined activation function. The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. The output of the \ac{nn} is the scalar $\tilde{y} \triangleq y^{(L-1)}$. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
+where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\psi(\cdot)$ is a fixed pre-determined activation function. The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. The output of the \ac{nn} is the scalar 
+$$\tilde{y} \triangleq \sigma(y^{(L-1)})$$,
+where $\sigma(\cdot)$ is the sigmoid function. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
 \begin{equation}
+\label{eq:decNN}
     f(\bm{y}) = \begin{cases}
     1 & \tilde{y} > \lambda \\
     0 & \tilde{y} \leq \lambda.
@@ -212,9 +215,10 @@ Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} pr
 
 Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$. An estimate of the \ac{ce} over the $S$ training points is 
 \begin{equation}\label{eq:ce}
-\hatcross = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y} +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+\hatcross = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
 \end{equation}
-where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are adjusted via the gradient descent algorithm. 
+where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. \hl{This is due to the fact that we can interpret $\tilde{y}$ as $p(\mathcal{H}_0|\bm y)$} \cite{Bishop2006}.
+ Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are then adjusted via the gradient descent algorithm. 
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
 
@@ -264,25 +268,37 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
 . However, note that in order to compute the \ac{auc} we must run the \ac{nn} over a set of test attenuation vectors multiple times with different threshold in order to reconstruct the \ac{roc} and compute a numerical approximation of its integral.
 
-\paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities. Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
+\paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities.
+
+As previously stated, \ac{ce} training provides \cite{Bishop2006}
 \begin{equation}
-\mathbb D(p_t; p_{\hat{t}}) = P_{\rm MD} \log \frac{P_{\rm MD}}{1 - P_{\rm FA}} + (1-P_{\rm MD})\log \frac{1- P_{\rm MD}}{P_{\rm FA}}\,,
-\label{KLb}
+	\tilde{y} \sim p(\mathcal{H}_0|\bm y).	
 \end{equation}
-where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$. Now, since $\hat{t}$ is obtained by $\tilde{y}$, by the data processing inequality we have (see also \cite{Tomasin-Ferrante}) that {\em for any thresholding of $\tilde{y}$}
+From the Bayes rule, 
 \begin{equation}
-\mathbb D(p_t; p_{\hat{t}}) \leq \mathbb D(p_t; p_{\tilde{y}})\,.
-\label{dpi}
+	p(\mathcal{H}_0| \bm y) = \sigma\left( \mathcal{L}^{(\bm y)} + \log \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)} \right).	
 \end{equation}
-Therefore, the right term of the inequality is  a synthetic metric of the test, irrespective of the optimization of the threshold, i.e., of a specific target \ac{fa} probability. The \ac{auc} is also another synthetic description irrespective of the specific thresholding. Now let us establish the connection between \ac{fa} and \ac{md} probabilities and \ac{ce}. The \ac{ce} used for \ac{nn} optimization (\ref{eq:ce})  can also written as 
-\begin{equation}
-\mathbb H(p_t,p_{\tilde{y}}) = \mathbb H(p_t) +\mathbb D(p_t; p_{\tilde{y}})\,,
-\end{equation}
-where $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the \ac{kl} divergence. Therefore by  adding $\mathbb H(p_t)$ to both terms in (\ref{dpi}) we have 
-\begin{equation}
-\mathbb H(p_t) +\mathbb  D(p_t; p_{\hat{t}}) \leq \mathbb H(p_t,p_{\tilde{y}})\,. 
-\end{equation}
-Since the entropy of $t$ is the same for all testing techniques, minimizing the \ac{ce} is equivalent to minimizing an upper bound on the \ac{kl} divergence between $t$ and $\hat{t}$, which can be written as a function of \ac{fa} and \ac{md} probabilities by (\ref{KLb}). This justifies the use of the \ac{ce} as a metric for the optimization of the \ac{bs} position.
+Hence, thresholding $\tilde{y}$ is equivalent to thresholding $\mathcal{L}^{(\bm y)}$, as $\sigma(\cdot)$ is an invertible function. From \eqref{eq:decNN} we can then obtain the \ac{roc}.
+ 
+% Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
+%\begin{equation}
+%\mathbb D(p_t; p_{\hat{t}}) = P_{\rm MD} \log \frac{P_{\rm MD}}{1 - P_{\rm FA}} + (1-P_{\rm MD})\log \frac{1- P_{\rm MD}}{P_{\rm FA}}\,,
+%\label{KLb}
+%\end{equation}
+%where $p_t$ is the \ac{pmd} of $t$, $p_{\hat{t}}$ is the \ac{pmd} of $\hat{t}$. Now, since $\hat{t}$ is obtained by $\tilde{y}$, by the data processing inequality we have (see also \cite{Tomasin-Ferrante}) that {\em for any thresholding of $\tilde{y}$}
+%\begin{equation}
+%\mathbb D(p_t; p_{\hat{t}}) \leq \mathbb D(p_t; p_{\tilde{y}})\,.
+%\label{dpi}
+%\end{equation}
+%Therefore, the right term of the inequality is  a synthetic metric of the test, irrespective of the optimization of the threshold, i.e., of a specific target \ac{fa} probability. The \ac{auc} is also another synthetic description irrespective of the specific thresholding. Now let us establish the connection between \ac{fa} and \ac{md} probabilities and \ac{ce}. The \ac{ce} used for \ac{nn} optimization (\ref{eq:ce})  can also written as 
+%\begin{equation}
+%\mathbb H(p_t,p_{\tilde{y}}) = \mathbb H(p_t) +\mathbb D(p_t; p_{\tilde{y}})\,,
+%\end{equation}
+%where $\mathbb H(\cdot)$ is the entropy function and $\mathbb D(\cdot;\cdot)$ is the \ac{kl} divergence. Therefore by  adding $\mathbb H(p_t)$ to both terms in (\ref{dpi}) we have 
+%\begin{equation}
+%\mathbb H(p_t) +\mathbb  D(p_t; p_{\hat{t}}) \leq \mathbb H(p_t,p_{\tilde{y}})\,. 
+%\end{equation}
+%Since the entropy of $t$ is the same for all testing techniques, minimizing the \ac{ce} is equivalent to minimizing an upper bound on the \ac{kl} divergence between $t$ and $\hat{t}$, which can be written as a function of \ac{fa} and \ac{md} probabilities by (\ref{KLb}). This justifies the use of the \ac{ce} as a metric for the optimization of the \ac{bs} position.
 
 \subsection{Particle Swarm Optimization}
 
