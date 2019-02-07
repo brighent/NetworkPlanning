@@ -219,7 +219,7 @@ Various options are considered in the literature for the training of the \ac{nn}
 \begin{equation}\label{eq:ce}
 \hatcross = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
 \end{equation}
-where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. \hl{This is due to the fact that we can interpret $\tilde{y}$ as $p(\mathcal{H}_0|\bm y)$} \cite{Bishop2006}.
+where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. \hl{This is due to the fact that we can interpret $\tilde{y}$ as $p(\mathcal{H}_0|\bm y)$ {\cite{Bishop2006}}}.
  Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are then adjusted via the gradient descent algorithm. 
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
@@ -272,7 +272,7 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 
 \paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities.
 
-As previously stated, \ac{ce} training provides \cite{Bishop2006}
+\hl{As previously stated, {\ac{ce}} training provides {\cite{Bishop2006}}}
 \begin{equation}
 	\tilde{y} \sim p(\mathcal{H}_0|\bm y).	
 \end{equation}
