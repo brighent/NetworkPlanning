@@ -202,7 +202,9 @@ A feed-forward \ac{nn} processes the input in stages, named layers, where the ou
 y_n^{(\ell)} = \psi\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
 \end{equation}
 where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\psi(\cdot)$ is a fixed pre-determined activation function. The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. The output of the \ac{nn} is the scalar 
-$$\tilde{y} \triangleq \sigma(y^{(L-1)})$$,
+\begin{equation}
+	\tilde{y} \triangleq \sigma(y^{(L-1)}),	
+\end{equation}
 where $\sigma(\cdot)$ is the sigmoid function. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
 \begin{equation}
 \label{eq:decNN}
