@@ -1,4 +1,4 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[conference,draftcls,onecolumn]{IEEEtran}
 
 
 \usepackage[utf8]{inputenc}
@@ -48,9 +48,13 @@
 \newacronym{wsn}{WSN}{wireless sensor network}
 \newacronym{irlv}{IRLV}{in-region location verification}
 
-\newcommand{\cross}{H_{p_t}(p_{\mathcal{H}_0|\bf y})}
-\newcommand{\hatcross}{\hat{H}(p_t,p_{\mathcal{H}_0|\bf y})}
+\newcommand{\cross}[2]{H_{#1}(#2)}
+\newcommand{\hatcross}[2]{\hat{H}_{#1}(#2)}
+\newcommand{\gy}{g(\bm y)}
+\newcommand{\E}[1]{\mathbb{E}_{\bm y}\left[#1\right]}
+
 \newtheorem{theorem}{Theorem}
+
 %\usepackage[autostyle]{csquotes}
 \usepackage[backend=biber,style=ieee]{biblatex}
 \bibliography{bibliography2.bib}
@@ -216,12 +220,56 @@ where $\sigma(\cdot)$ is the sigmoid function. Finally, the test function is obt
 \end{equation}
 Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
 
-Various options are considered in the literature for the training of the \ac{nn}. Here we aim at minimizing the \ac{ce} between the output of the \ac{nn} and the labels $t_i$. An estimate of the \ac{ce} over the $S$ training points is 
+Various options are considered in the literature for the training of the \ac{nn}. Here we consider as objective function, the empirical \ac{ce} $\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}}$ between the output of the \ac{nn} and the labels $t_i$. 
 \begin{equation}\label{eq:ce}
-\hatcross = -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
 \end{equation}
-where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. \hl{This is due to the fact that we can interpret $\tilde{y}$ as $p(\mathcal{H}_0|\bm y)$, as wil be later discussed}.
- Vectors $\bm{w}_n^{(\ell)}$ and scalars $b_n^{(\ell)}$ are then adjusted via the gradient descent algorithm. 
+where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. Training is performed with gradient descent minimizing $\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}}$.
+\begin{theorem}
+Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i.e., with infinite number of training points, layers and neurons. Then 
+\begin{equation}
+	\gy = p(\mathcal{H}_0|\bm y)	
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
+\begin{equation}
+	\hatcross{p_t}{\gy} = - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm y \in \mathcal{Y}_0} \log(\gy) 
+		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm y \in \mathcal{Y}_1} \log(1-\gy) \right],	
+\end{equation}
+where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $k \in \{0,1\}$.
+Let $S \to \infty$. By the strong law of large numbers \hl{citare}
+\begin{equation}
+	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y + 
+		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right]. 
+\end{equation}
+From Bayes rule
+\begin{equation}
+\label{eq:dim1}
+\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left\{ \int_{\mathcal{Y}} \bigl[ p(\mathcal{H}_0|\bm y) \log(\gy) + 
+	(1-p(\mathcal{H}_0|\bm y)) \log(1-\gy)\bigr] p(\bm y)   d\bm y \right\}. 		
+\end{equation}
+We introduce the Bernoulli random variable $\xi$ with alphabet $\Xi = \{0,1\}$ and \ac{pdf} $\bm q = [q_0 \ q_1]$, where
+\begin{subequations}
+\label{eq:q}
+\begin{align}
+	q_0 &\triangleq p(\xi=0)=\gy \\
+	q_1 &\triangleq p(\xi=1)=1-\gy.
+\end{align}
+\end{subequations}
+Note that $\bm q$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis. Let also 
+\begin{equation}
+	\bm p_{\mathcal{H}|\bm y} \triangleq [p(\mathcal{H}_0|\bm y)\ p(\mathcal{H}_1|\bm y)].	
+\end{equation}
+By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
+\begin{equation}
+\label{eq:final}
+	\lim_{S \to \infty}	\hatcross{p_t}{\gy} =	\E{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
+		\E{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
+\end{equation}
+where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence and the second equality is an alternative definition of cross entropy.
+\ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameter, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
+\end{proof}
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
 
