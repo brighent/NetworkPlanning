@@ -408,11 +408,11 @@ In order to test the \ac{nn} approach in a more challenging scenario, we conside
 %     \label{fig:trueMap}
 % \end{figure}
 
-Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} of the proposed \ac{nn} \ac{irlv} system  trained with different number of training points $q$. Results have been obtained for a $N_L=3$ layer \ac{nn} with $N_h=5$ neurons in the hidden layer. We see that the \ac{auc} decreases when increasing the number of training points and that, starting from $q=10^6$, the \ac{roc} does not improve. This is due to the the fact that, for the selected \ac{nn} architecture, training has reached convergence and hence adding further data to the training process does not add information to the function implemented by the \ac{nn}. Staring from $q=10^4$ the \ac{irlv} system can achieve $P_{\rm FA}$ and $P_{\rm MD}$ both in the range $10^{-1}$ to $10^{-2}$.
+Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} of the proposed \ac{nn} \ac{irlv} system  trained with different number of training points $q$. Results have been obtained for a $N_L=3$ layer \ac{nn} with $N_h=5$ neurons in the hidden layer. We see that the \ac{auc} decreases when increasing the number of training points and that, starting from $q=10^6$, the \ac{roc} does not improve. This is due to the the fact that, for the selected \ac{nn} architecture, training has reached convergence and hence adding further data to the training process does not add information to the function implemented by the \ac{nn}. 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\columnwidth]{mean_maps.eps}
+    \includegraphics[width=0.9\columnwidth]{mean_maps_2.eps}
     \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $q$ training points.}
     \label{fig:n_train}
 \end{figure}
