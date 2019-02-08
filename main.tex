@@ -271,15 +271,16 @@ where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence and the second equali
 \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameter, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
 \end{proof}
 
-Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge. In the following we show by simulation that for $S$ large enough we obtain the same performance (\ac{fa} and \ac{md}) probabilities of the \ac{np} solution, in the \ac{los} scenario of the previous section.
+Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge.
+However, at convergence the \ac{nn} achieves the same performance, in terms of \ac{roc}, of the NP approach. This holds since \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
+\begin{equation}
+	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}.	
+\end{equation}  
+This is a direct consequence of the Bayes rule applied as follows 
+\begin{equation}
+	p(\mathcal{H}_0| \bm y) = \frac{1}{1+\mathcal{L}^{(\bm y)} \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)}}.	
+\end{equation}
 
-\subsection{Interpretation of the Output of the \ac{nn}}
-
-We are going here to prove the following theorem.
-
-\begin{theorem}
-Consider a \ac{nn} trained with \ac{ce} loss function in (\ref{eq:ce}).
-\end{theorem}
 
 
 
