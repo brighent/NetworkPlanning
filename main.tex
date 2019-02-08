@@ -158,6 +158,7 @@ The \ac{irlv} problem can be seen as an hypothesis testing problem between the t
 \end{equation}
 where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} of observing $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
 \begin{equation}
+\label{eq:thrOpt}
     \hat{t} = f(\bm{y}) = \begin{cases}
     0 & \mathcal{L}^{(\bm{y})} \geq \theta\,, \\ 
     1 & \mathcal{L}^{(\bm{y})} < \theta\,, 
@@ -272,15 +273,18 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 
 \paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities.
 
-\hl{As previously stated, {\ac{ce}} training provides {\cite{Bishop2006}}}
+As previously proved, {\ac{ce}} training provides, asymptotically, 
 \begin{equation}
-	\tilde{y} \sim p(\mathcal{H}_0|\bm y).	
+	\tilde{y} \to p(\mathcal{H}_0|\bm y).	
 \end{equation}
 From the Bayes rule, 
 \begin{equation}
-	p(\mathcal{H}_0| \bm y) = \sigma\left( \mathcal{L}^{(\bm y)} + \log \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)} \right).	
+	p(\mathcal{H}_0| \bm y) = \frac{1}{1+\mathcal{L}^{(\bm y)} \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)}}	
 \end{equation}
-Hence, thresholding $\tilde{y}$ is equivalent to thresholding $\mathcal{L}^{(\bm y)}$, as $\sigma(\cdot)$ is an invertible function. From \eqref{eq:decNN} we can then obtain the \ac{roc}.
+Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
+\begin{equation}
+	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}	
+\end{equation}
  
 % Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
 %\begin{equation}
