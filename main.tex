@@ -52,7 +52,7 @@
 \newcommand{\cross}[2]{H_{#1}(#2)}
 \newcommand{\hatcross}[2]{\hat{H}_{#1}(#2)}
 \newcommand{\gy}{g(\bm y)}
-\newcommand{\E}[1]{\mathbb{E}_{\bm y}\left[#1\right]}
+\newcommand{\E}[2]{\mathbb{E}_{#1}\left[#2\right]}
 
 \newtheorem{theorem}{Theorem}
 
@@ -287,10 +287,10 @@ Note that $\bm q$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by 
 By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
 \begin{equation}
 \label{eq:final}
-	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =	\E{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
-		\E{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
+	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =	\E{\bm y}{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
+		\E{\bm y}{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
 \end{equation}
-where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pmd} $\bm c$ and $\bm d$, $H(\cdot)$ is the entropy function and $\E{\cdot}$ is the expected value with respect to the distribution of $\bm y$. The second equality holds by definition of cross entropy.
+where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pmd} $\bm c$ and $\bm d$ and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
 
 Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
 \end{proof}
