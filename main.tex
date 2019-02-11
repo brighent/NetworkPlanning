@@ -129,17 +129,17 @@ where $f_0$ is the carrier frequency, and $c$ is the speed of light. For a  non-
     + 21\log_{10}\left(\frac{\left.f_0\right|_{\rm MHz}}{10^6}\right) + 80,
     \end{split}
 \end{equation}
-where $\left.h_{\rm ap}\right|_{\rm m}$ is the \ac{bs} antenna elevation in meters.
+where $\left.h_{\rm ap}\right|_{\rm m}$ is the \ac{bs} antenna elevation in meters, $\left. f_0 \right|_{\rm MHz}$ is the carrier frequency in MHz, and $\left. L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})\right|$ ios the \ac{ue}-\ac{bs} distance in meters.
 
-We assume that correlation between points $\bm{x}_i$ and $\bm{x}_j$ is
+We assume that correlation between shadowing coefficients $\left( a_{s}(\bm{x}_i)\right)_{\rm dB}$ and $\left( a_{s}(\bm{x}_j)\right)_{\rm dB}$ for two \acp{bs} located in $\bm{x}_i$ and $\bm{x}_j$ when the \ac{ue} is transmitting is
 \begin{equation}\label{eq: coor mat}
-    \bm{\Sigma}_{(i,j)} = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
+    \mathbb{E}[s(\bm{x}_i)\bm{s}(x_j)] = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
 \end{equation}
 where $d_c$ is the shadowing decorrelation distance. 
 
 
 \section{In-region Location Verification}\label{sec: ml}
-
+Let us define the hypothesis of the \ac{irlv} problem as
  \begin{equation}
 \begin{split}
   \mathcal H_0: \mbox{the \ac{ue} is in $\mathcal{A}_0$} \\
@@ -147,17 +147,28 @@ where $d_c$ is the shadowing decorrelation distance.
   \end{split}
 \end{equation}
 
-During the identification phase a trusted \ac{ue} transmits a training signal with known transmit power from $S$ positions, some inside and other outside the area $\mathcal A_0$. The corresponding $S$ attenuation vectors are noted as $\bm{a}^{(i)}, \ i=1,\dots S$, while for position $i$ the corresponding label is $t_i=1$ if \ac{ue} is in $\mathcal A_1$ and we define $t_i=0$ if \ac{ue} is in $\mathcal A_0$. We collect all the $t_i$ values into the vector $\bm{t}=[t_1,...,t_S]$.
-
-By using these training vectors and labels we aim at building a function
+In the training phase the \ac{ue} transmits from $S$ locations. For transmission $i=1,...,S$, let
 \begin{equation}
-    \hat{t} = f(\bm{y}) \in \{0,1\}\,,
+    \bm{a}^{(i)}=[a_1^{(i)},...,a_{N_{\rm AP}}^{(i)}]
 \end{equation}
-that for an attenuation vector $\bm{y}$ determines if the \ac{ue} is in $\mathcal A_0$ ($\hat{t}=0$) or in $\mathcal A_1$ ($\hat{t}=1$).
+be the vector of the measured attenuations at the  \acp{bs}. Let also set label $t_i=0$ is \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. We collect all labels into the $S$-size vector $\bm{t}=[t_1,...,t_S]$.
 
-The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, $P_{\rm FA} ={\mathbb P}(\hat{t} =1 | \mathcal H_0)$ and  $P_{\rm MD}={\mathbb P}(\hat{t} = 0 | \mathcal H_1)$.
+By using these attenuation training vectors and labels, we aim at building a function
+\begin{equation}
+    \hat{t} = f(\bm{y}) \in \{0,1\}\,
+\end{equation}
+that maps for an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ if \ac{ue} as outside.
 
-\subsection{Detector for Known Attenuation Statistics}
+The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
+\begin{equation}
+P_{\rm FA} ={\mathbb P}(\hat{t} =1 | \mathcal H_0) \end{equation} 
+and  
+\begin{equation}
+ P_{\rm MD}={\mathbb P}(\hat{t} = 0 | \mathcal H_1).   
+\end{equation}
+
+
+\subsection{Test for Known Attenuation Statistics}
 
 The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr} of the attenuation vector
 \begin{equation}\label{eq:lr}
@@ -221,11 +232,11 @@ where $\sigma(\cdot)$ is the sigmoid function. Finally, the test function is obt
     0 & \tilde{y} \leq \lambda.
     \end{cases}
 \end{equation}
-Different values of $\lambda$ provide different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
+By varying $\lambda$ we obtain different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
 
-Various options are considered in the literature for the training of the \ac{nn}. Here we consider as objective function, the empirical \ac{ce} $\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}}$ between the output of the \ac{nn} and the labels $t_i$. 
+Various options are considered in the literature for \ac{nn} training. Here we consider as objective function, the empirical \ac{ce} $\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}}$ between the \ac{nn} output and the labels $t_i$. 
 \begin{equation}\label{eq:ce}
-\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right] \right),
+\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
 \end{equation}
 where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point and $p_t$ is the \ac{pmd} of label $t$. Training is performed with gradient descent minimizing $\hatcross{p_t}{p_{\mathcal{H}_0|\bm y}}$.
 \begin{theorem}
