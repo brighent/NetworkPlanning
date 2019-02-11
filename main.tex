@@ -331,14 +331,11 @@ This is a direct consequence of the Bayes rule applied as follows
 \section{Network Planning}\label{sec:bsPos}
 
 As the attenuation depends on the position of the \acp{bs} and on the surrounding environment, the performance of the authentication system depend on the number of \acp{bs} and on their location in space. In this section, we derive an approach to optimally locate \acp{bs} (network planning) so that the authentication system attains the best performance. 
+The idea is to exploit the \ac{nn} in order to obtain a proxy of the performance of the \ac{irlv} system and hence find the optimal location of the \acp{bs}, such that the resulting system attains the best classification performance.
 
-We have shown so far that the \ac{nn} is an effective tool to perform hypothesis testing. Furthermore it has been shown in \cite{nostro} that the \ac{nn} with a sufficient number of neurons and for a sufficiently large training set achieves the optimal \ac{np} performance. The idea is to exploit the training process of the \ac{nn} in order to obtain a proxy of the performance of the \ac{irlv} system and hence find the optimal location of the \acp{bs}, such that the resulting system attains the best classification perfrormance.
+The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$ while capturing the whole behavior of the \ac{roc}, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. In particular the \ac{roc} \ac{auc} \cite{hanley-82}. 
 
-The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$ while capturing the whole behavior of the \ac{roc}, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. In particular, we consider two metrics, i.e., the   \ac{roc} \ac{auc} \cite{hanley-82} and the \ac{ce}. 
-
-We now describe the two metrics and highlight their relation, by showing how they  are related to the \ac{fa} and \ac{md} probability.
-
-\paragraph{Area Under the ROC Curve} The \ac{roc} \ac{auc} is defined as 
+The \ac{roc} \ac{auc} is defined as 
 \begin{equation}
     K  = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
 \end{equation}
@@ -346,7 +343,7 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
 . However, note that in order to compute the \ac{auc} we must run the \ac{nn} over a set of test attenuation vectors multiple times with different threshold in order to reconstruct the \ac{roc} and compute a numerical approximation of its integral.
 
-\paragraph{Cross-Entropy} Another metric that captures the quality of a test is the \ac{ce} between $t$ and $\tilde{y}$. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed. We now provide the relation between the \ac{ce} and the \ac{fa} and \ac{md} probabilities.
+We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce} as a proxy of the system performance. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed.
 
 As previously proved, {\ac{ce}} training provides, asymptotically, 
 \begin{equation}
@@ -360,6 +357,8 @@ Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
 \begin{equation}
 	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}	
 \end{equation}
+
+Recalling that the training minimization problem is non-convex, the same training set can lead to \acp{nn} with different classification performance. Therefore, among different \acp{nn} trained over the same training set, the one with minimum \ac{ce} is expected to have the best classification performance and hence minimum \ac{auc}. This also involves a significantly lower computational complexity of the overall algorithm, as the computation of the \ac{auc} is not needed for each candidate \ac{nn}.
  
 % Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
 %\begin{equation}
@@ -383,11 +382,9 @@ Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
 
 \subsection{Particle Swarm Optimization}
 
-In order to solve the \acp{bs} positioning problem we exploit the \ac{pso} \cite{Kennedy-11}, briefly recalled here.
+As before stated, the training algorithm is not convex, and neither it is the network planning. In order to solve the \acp{bs} positioning problem we exploit the \ac{pso} \cite{Kennedy-11}, which is an iterative algorithm which performs the simultaneous optimization of different points and hence performs multi-start for non-convex optimization. The \ac{pso} is briefly recalled here.
  
-\ac{pso} is an iterative optimization algorithm based on social behavior of animals, e.g., birds flocking and fish schools. Consider a total number of $P$ particles, where  particle $p=1, \ldots P$, is described by a vector of \acp{bs} positions $\bm{x}_p = [\bm{x}_{\rm ap}^{(1)}(p),\ldots, \bm{x}_{\rm ap}^{(N_{\rm ap})}(p)]$ and by its velocity $\bm{v}_p$.  Each particle is a candidate solution of the optimization problem. 
-
-Starting from a random position for all the particles, at each iteration both  positions $\bm{x}_p$ and  velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimum found so far by the entire population and a local optimum for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration. According to the chosen objective function, the optimal values are those minimizing either the \ac{roc} \ac{auc} or  the \ac{ce}.
+\ac{pso} is an iterative optimization algorithm based on social behavior of animals, e.g., birds flocking and fish schools. Consider a total number of $P$ particles, where  particle $p=1, \ldots P$, is described by a vector of \acp{bs} positions $\bm{x}_p = [\bm{x}_{\rm ap}^{(1)}(p),\ldots, \bm{x}_{\rm ap}^{(N_{\rm ap})}(p)]$ and by its velocity $\bm{v}_p$.  Each particle is a candidate solution of the optimization problem. Starting from a random position for all the particles, at each iteration both  positions $\bm{x}_p$ and  velocities $\bm{v}_p$ are updated. Two optimal values are defined in each iteration: the global optimum found so far by the entire population and a local optimum for each particle, i.e., the optimal value found by the individual $p$ up to the current iteration. We define as $\bm{o}_g$ the position of the the global optimal values and as $\bm{o}_p$ the position of the optimal value found by particle $p$ at the current iteration. According to the chosen objective function, the optimal values are those minimizing either the \ac{roc} \ac{auc} or  the \ac{ce}.
 
 The position and velocity of the particles are updated at iteration $\ell$ as \cite{Kennedy-11}
    \begin{equation}\label{eq: v up}
@@ -403,7 +400,7 @@ where $\omega$ is the inertia coefficient and $\phi_1$ and $\phi_2$ are random v
 
 \subsection{PSO-Based Network Planning}
 
-As we have seen the \ac{roc} \ac{auc} well describes the overall behaviour of the \ac{roc} and is hence widely recognized as a valid synthetic metric for hypothesis testing. The \ac{ce} represents instead only an upper bound on the \ac{kl} divergence, thus is less reliable and is not directly related to the \ac{auc}. On the other hand, computation of the \ac{auc} is complicated by the need to performing extensive testing, while the \ac{ce} is immediately provided by the \ac{nn} training process. 
+As we have seen the \ac{roc} \ac{auc} well describes the overall behaviour of the \ac{roc} and is hence widely recognized as a valid synthetic metric for hypothesis testing. On the other hand, computation of the \ac{auc} is complicated by the need to performing extensive testing, while the \ac{ce} is immediately provided by the \ac{nn} training process. 
 
 In particular, the testing needed to compute \ac{auc} has an additional complexity (with respect to training that must be performed anyway), of 
 \begin{equation}
@@ -416,8 +413,7 @@ where  $\mathcal{C}_{\rm out}$ denotes the complexity associated to running the 
 where $N_{\rm h}$ is the number of neurons in the hidden layer, $N_{\rm L}$ is the number of hidden layers and $\tau$ is the size of the testing set.
 The computation of the \ac{roc} curve requires the estimation of the $P_{\rm FA}$ and $P_{\rm MD}$ values for each threshold value $\lambda$, whereas the computation of the \ac{auc} requires the numerical integration of the \ac{roc} curve over $P_{\rm FA}$ values.
 
-In order to reduce the complexity of the \ac{pso} algorithm and still approximate the optimal solution in terms of the \ac{auc} metric we propose to split the \ac{pso} algorithm into two stages: for a first round of iterations the position of the \acp{bs} is moved by minimizing the \ac{ce}, and starting from the results of these iterations a second round  of iterations is started, where we use the \ac{auc} as optimization function. 
-The proposed two-stage algorithm for \acp{bs} positioning is reported in Algorithm 1. We initialize $P$ particles with random positions for each of the $N_{\rm AP}$ \acp{bs} in each particle; we train the \ac{nn} and compute the \ac{ce} $\rm{CE}_p^{(0)}$ for each particle $p$. The global optimum value $\rm{CE}_g$ is set to the minimum among all $\rm{CE}_p^{(0)}$ values. Then, the positions and the velocities of the particles are updated via (\ref{eq: v up}) and (\ref{eq: p up}), and both the local and global optimum are updated according to the obtained values at the current iterations. When $\rm{CE}_g$ converges the objective function is set to the \ac{auc} and all particles perform  training and testing of the \ac{nn}. The algorithm stops when the global optimum converges.
+The proposed \ac{pso}-based network planning algorithm is reported in Algorithm 1. Notice that the ame algorithm is used for both the \ac{auc} and \ac{ce} based optimization, where the optimization metric is denoted as $\mathcal{B}$. We initialize $P$ particles with random positions for each of the $N_{\rm AP}$ \acp{bs} in each particle; we train the \ac{nn} and compute $\mathcal{B}_p^{(0)}$ for each particle $p$. The global optimum value $\mathcal{B}_g$ is set to the minimum among all $\mathcal{B}_p^{(0)}$ values. Then, the positions and the velocities of the particles are updated via (\ref{eq: v up}) and (\ref{eq: p up}), and both the local and global optimum are updated according to the obtained values at the current iterations. The algorithm stops when the global optimum converges.
 
  \begin{algorithm}[b!]
 
@@ -426,16 +422,17 @@ The proposed two-stage algorithm for \acp{bs} positioning is reported in Algorit
   \KwData{ number of particles $P$, $N_{\rm AP}$}
   \KwResult{optimal position }
   Initialize particles\;
-  train the \ac{nn} algorithm for each particle $\to$ $\rm{CE}_p^{(0)}$, $p=1,...,N_p$\;
-  $\rm{CE}_g=\underset{p=1,...,N_p}{min} \, \rm{CE}_p^{(0)}$\;
-  $it = 0$\;
+  train the \ac{nn} algorithm for each particle\;
+  $\mathcal{B}_p^{(0)}$, $p=1,...,N_p$\;
+  $\mathcal{B}_g=\underset{p=1,...,N_p}{min} \, \mathcal{B}_p^{(0)}$\;
+  $i = 0$\;
 
-  \Repeat{convergence of $\rm{CE}_g$}{
+  \Repeat{convergence of $\mathcal{B}_g$}{
          $i = i + 1$\;
          \For{$p=1,\ldots,P$}{
          update velocity and position vector of particle via (\ref{eq: v up}) and (\ref{eq: p up})\;
-                  train the \ac{nn} for each particle $\to$ $\rm{CE}_p^{(i)}$\;
-                  \If{$\rm{CE}_p^{(i)} < \rm{CE}_g$}{ $\rm{CE}_g = \rm{CE}_p^{(i)}$ \;}
+                  train the \ac{nn} for each particle $\to$ $\mathcal{B}_p^{(i)}$\;
+                  \If{$\mathcal{B}_p^{(i)} < \mathcal{B}_g$}{ $\mathcal{B}_g = \mathcal{B}_p^{(i)}$ \;}
          }
       
       }
@@ -443,30 +440,30 @@ The proposed two-stage algorithm for \acp{bs} positioning is reported in Algorit
 \caption{Proposed \ac{ce}-based APs positioning algorithm.}
  \end{algorithm}      
 
- \begin{algorithm}[b!]
+%  \begin{algorithm}[b!]
 
-\small
+% \small
 
-  \KwData{ number of particles $P$, $N_{\rm AP}$}
-  \KwResult{optimal position }
-  Initialize particles\;      
-      train the \ac{nn} algorithm for each particle $\to$ $K_p^{(0)}$, $p=1,...,N_p$\;
-  $K_g=\underset{p=1,...,N_p}{min} \, K_p^{(0)}$\;
-      $i = 0$\;
-      \Repeat{convergence of $K_g$}{
-         $i = i + 1$\;
-         \For{$p=1,\ldots,P$}{
-         update velocity and position vector of particle via (\ref{eq: v up}) and (\ref{eq: p up})\;
-                  train the \ac{nn} for each particle \;
-                  test the \ac{nn} $\to$
-                  $K_p^{(i)}$\;
-                  \If{$K_p^{(i)} < K_g$}{ $K_g = K_p^{(i)}$ \;}
-         }
+%   \KwData{ number of particles $P$, $N_{\rm AP}$}
+%   \KwResult{optimal position }
+%   Initialize particles\;      
+%       train the \ac{nn} algorithm for each particle $\to$ $K_p^{(0)}$, $p=1,...,N_p$\;
+%   $K_g=\underset{p=1,...,N_p}{min} \, K_p^{(0)}$\;
+%       $i = 0$\;
+%       \Repeat{convergence of $K_g$}{
+%          $i = i + 1$\;
+%          \For{$p=1,\ldots,P$}{
+%          update velocity and position vector of particle via (\ref{eq: v up}) and (\ref{eq: p up})\;
+%                   train the \ac{nn} for each particle \;
+%                   test the \ac{nn} $\to$
+%                   $K_p^{(i)}$\;
+%                   \If{$K_p^{(i)} < K_g$}{ $K_g = K_p^{(i)}$ \;}
+%          }
       
-      }
+%       }
     
-\caption{Proposed \ac{auc}-based APs positioning algorithm.}
- \end{algorithm}
+% \caption{Proposed \ac{auc}-based APs positioning algorithm.}
+%  \end{algorithm}
 
 Notice that, as the optimization problem is non-convex, solving \ac{pso} is similar to a multi-start optimization considering $P$ different starting points, which is a standard method used to avoid local minimum solutions. As the number $P$ increases the probability of resolving to a local solution is reduced.
 
@@ -508,26 +505,26 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} 
 
 \subsection{Network Planning Performance}
 
-We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. Though there exists a variety of implementations of the \ac{pso} the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. We compare the performance of Algorithm 1 with two conventional \ac{pso} algorithms, using only one optimization metric between \ac{auc} and \ac{ce}. The overall performance metric is the \ac{auc}.
+We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. Though there exists a variety of implementations of the \ac{pso} the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. We compare the performance of Algorithm 1 with the two considered optimization metrics. The overall performance metric is the \ac{auc}.
 
-Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the proposed solution reaches the lowest value of \ac{auc} with respect to the other solution. Moreover, it also achieves the minimum with a lower number of iteration, thus with a lower complexity, as discussed in the previous section. Indeed, Algorithm 1 outperforms even the \ac{pso} with pure \ac{auc} target function, since in general the \ac{pso} does not achieve the optimal solution, but typically stops at locally optimal solutions. On the other hand, the \ac{pso} using only the \ac{ce} as target function shows the highest values of \ac{auc}. 
+Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches the same  \ac{auc} value of the \ac{auc}-based solution. Moreover, it also achieves the minimum with a lower number of iteration, thus with a lower complexity, as discussed in the previous section. Indeed, Algorithm 1 outperforms even the \ac{pso} with pure \ac{auc} target function, since in general the \ac{pso} does not achieve the optimal solution, but typically stops at locally optimal solutions. On the other hand, the \ac{pso} using only the \ac{ce} as target function shows the highest values of \ac{auc}. 
 
  
-Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce} as objective function in Algorithm 1. We note that in half of the cases only four iterations are performed using \ac{ce} and then the rest of the iterations are using the \ac{auc} as a target function. Since from Fig. \ref{fig:CEvsAUC} we note that in five  iterations Algorithm 1 is on average already quite close to convergence we can conclude that the number of iterations in the \ac{auc} stage is very small in most cases. This does not occur for the pure \ac{auc} solution, where a higher number of \ac{auc} iterations is needed to achieve convergence (see  Fig. \ref{fig:CEvsAUC}).
+% Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce} as objective function in Algorithm 1. We note that in half of the cases only four iterations are performed using \ac{ce} and then the rest of the iterations are using the \ac{auc} as a target function. Since from Fig. \ref{fig:CEvsAUC} we note that in five  iterations Algorithm 1 is on average already quite close to convergence we can conclude that the number of iterations in the \ac{auc} stage is very small in most cases. This does not occur for the pure \ac{auc} solution, where a higher number of \ac{auc} iterations is needed to achieve convergence (see  Fig. \ref{fig:CEvsAUC}).
 %\balance
 \begin{figure} 
     \centering
-    \includegraphics[width=0.9\columnwidth]{CE_vsAUC.eps}
+    \includegraphics[width=0.9\columnwidth]{newPSO.eps}
     \caption{Mean \ac{auc} vs. the number of \ac{pso} iterations for Algorithm 1, and two \ac{pso} algorithms using only the  \ac{auc} and the \ac{ce} as objective functions. }
     \label{fig:CEvsAUC}
 \end{figure}
 
-\begin{figure} 
-    \centering
-    \includegraphics[width=0.9\columnwidth]{cdf_bar.eps}
-    \caption{CDF of the number of iterations of the first stage of Algorithm 1. }
-    \label{fig:cdf}
-\end{figure}
+% \begin{figure} 
+%     \centering
+%     \includegraphics[width=0.9\columnwidth]{cdf_bar.eps}
+%     \caption{CDF of the number of iterations of the first stage of Algorithm 1. }
+%     \label{fig:cdf}
+% \end{figure}
  
 \section{Conclusions}
 \label{sec:conc}
