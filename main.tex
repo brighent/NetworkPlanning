@@ -42,6 +42,7 @@
 \newacronym{pso}{PSO}{particle swarm optimization}
 \newacronym{rnn}{RNN}{replicator neural network}
 \newacronym{roc}{ROC}{receiver operating characteristic}
+\newacronym{roi}{ROI}{region of interest}
 \newacronym{rss}{RSS}{received signal strength}
 \newacronym[\glslongpluralkey={support vector machines}]{svm}{SVM}{support vector machine}
 \newacronym{ue}{UE}{user equipment}
@@ -69,7 +70,7 @@
 \maketitle
 
 \begin{abstract}
-For a \ac{ue} transmitting over a wireless network we consider the \ac{irlv} problem of deciding if the \ac{ue} is inside or outside a specific physical area (e.g., a safe room). The decision process exploits the features of the channel between the \ac{ue} and a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with the channel features (in particular, noisy attenuation values) collected by the \acp{bs} for various positions both inside and outside the specific area and outputs a decision between the \ac{ue} being inside or outside the area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and the \hl{..} user position set. In order to solve the minimization problem we propose a two-stage \ac{pso} algorithm. We show that for a long training and a \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
+For a \ac{ue} transmitting over a wireless network we consider the \ac{irlv} problem of deciding if the \ac{ue} is inside or outside a specific physical area (e.g., a safe room). The decision process exploits the features of the channel between the \ac{ue} and a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with the channel features (in particular, noisy attenuation values) collected by the \acp{bs} for various positions both inside and outside the specific area and outputs a decision between the \ac{ue} being inside or outside the area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and the true user position set. In order to solve the minimization problem we propose a two-stage \ac{pso} algorithm. We show that for a long training and a \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -81,15 +82,15 @@ Physical layer security, location verification, neural network, support vector m
 
 Applications using information on the user location are rapidly spreading, also to ensure that some services are obtained only in pre-determined areas. For example, some on line gambling sites can be used only when in the state where the site is registered.
 
-In order to establish the user position we can rely on the reports of localization modules in the user \hl{..}
+In order to establish the user position we can rely on the reports of localization modules in the user device, e.g., the GPS module. However, tempering with devices or on the software interface to the GPS module is relatively easy \hl{citazione}. Thus more reliable solutions must be explored.
 
 Location verification systems aim at verifying the position of devices in sensor networks \cite{Zeng-survey, 8376254}, Internet of Things \cite{7903611}, and mobile cell networks \cite{quaglia}. Various approaches have been proposed for location verification, typically based on the measurement of the distance between the transmitter and other users  or  anchor nodes belonging to the network infrastructure. The distance measures are obtained, for example, through the \ac{rss} at anchor nodes for signals transmitted by the terminal under verification.  This problem is closely related to the {\em user authentication} at the physical layer, where wireless channel features are exploited to verify the sender of a message \cite{7270404}.
 
-We focus here on  \ac{irlv}, i.e., the problem of deciding whether a message coming from a terminal over a wireless network has been originated from a specific physical area, e.g., a safe room, or not \cite{Zeng-survey}. \ac{irlv} can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays.  
+We focus here on  \ac{irlv}, i.e., the problem of deciding whether a message coming from a terminal over a wireless network has been originated from a specific physical area, e.g., a safe room, or not \cite{Zeng-survey}. \ac{irlv} can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays. \hl{drawbacks}
 
-In this paper, we consider the \ac{irlv} problem for a \ac{ue} connected to a set of network \acp{bs}. We first observe that the  \ac{np} lemma \cite{Neyman289} provides the optimal solution to the \ac{irlv} hypothesis testing problem by providing  the test with the minimum \ac{md} probability for a given \ac{fa} probability. For more complex situations (including more elaborate channel impairments) the \ac{np} test could not be implemented, and we propose instead a \ac{ml} approach  where i) first channel measurements are collected by trusted nodes both inside and outside the region of interest, ii) then a model is trained to take decisions between the two hypothesis before deployment as tester. \ac{ml} techniques have already found application in the user authentication problem (see  \cite{xiao-2018} and references therein). However, \ac{ml} solutions have never been applied before to the \ac{irlv} problem to the best of authors' knowledge. 
+In this paper, we consider the \ac{irlv} problem for a \ac{ue} connected to a set of network \acp{bs}. The decision on the user position is taken on the basis of observed features of the channel over which communication occurs. For exemplary purposes we focus here on the observation of the attenuation of the channel between the \ac{ue} and the \acp{bs}. We first observe that the  \ac{np} lemma \cite{Neyman289} is the optimal solution to \ac{irlv} by providing the hypothesis test with the minimum \ac{md} probability for a given \ac{fa} probability. However, the \ac{np} solution requires the explicit knowledge of the statistics of the observed features, which may not always be available. Therefore we propose a \ac{ml} approach  where i) first channel measurements are collected by trusted nodes both inside and outside the \ac{roi}, ii) then a machine is trained to take decisions between the two hypotheses, iii) the machine is exploited to take decisions on the unknown \acp{ue}. \ac{ml} techniques have already found application in user authentication (see  \cite{xiao-2018} and references therein). However, \ac{ml} solutions have never been applied before to \ac{irlv}, to the best of authors' knowledge. 
 
-Then, leveraging the  models and results obtained for the \ac{irlv} we address the problem of optimum positioning of the \acp{bs} (network planning) that provides the channel measurements over which the test is performed. Two metrics are considered: the \ac{ce} obtained in \ac{nn} training and the \ac{auc} of the \ac{roc}. We propose a two-stage \ac{pso} algorithm having as target the  minimization of  the \ac{ce} and  the \ac{roc} \ac{auc}. We also investigate the relation between the two metrics, \ac{auc} and \ac{ce}, showing how both are functions of the \ac{fa} and \ac{md} probabilities. Simulation results of the proposed solution over channels with shadow fading complete this work.
+Then, leveraging \ac{irlv} solutionwe address the problem of optimum positioning of the \acp{bs} (network planning). Two metrics are considered fo this optimization: the \ac{ce} of \ac{nn} training, and the \ac{auc} of the \ac{roc}. We propose a two-stage \ac{pso} algorithm minimizing either the \ac{ce} or the \ac{roc} \ac{auc}. Simulation results of the proposed solution over channels with shadow fading complete this work.
 
 %The rest of the paper is organized as follows. In Section \ref{sec:sys model} we describe the system and channel model. Section \ref{sec: ml} describes the optimal \ac{np} solution and the \ac{ml} solution to \ac{irlv}. In Section \ref{sec:bsPos} we discuss the \acp{bs} positioning problem and we show how \ac{ml} can be used to solve it. In Section \ref{sec: nr} we present numerical results showing the effectiveness of the proposed solutions for both \ac{irlv} and \ac{bs} positioning, before conclusions outlined in Section \ref{sec:conc}.
 
@@ -99,38 +100,38 @@ Then, leveraging the  models and results obtained for the \ac{irlv} we address t
 \section{System Model}\label{sec:sys model}
 
 
-We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from inside an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The location dependency of the channel between the \ac{ue} and the \acp{bs} is exploited to distinguish between transmissions from inside $\mathcal{A}_0$ and outside of it, i.e., from  $\mathcal{A}_1=\mathcal{A} \setminus \mathcal{A}_0$.  Transmission is assumed to be narrowband and the channel feature used for \ac{irlv} is the attenuation introduced by the channel.
+We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from inside an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The dependency on location of the \ac{ue}-\ac{bs} channels is exploited to distinguish between transmissions from inside and outside $\mathcal{A}_0$. Transmissions are assumed to be narrowband and the channel feature used for \ac{irlv} is its attenuation.
 
-The \ac{irlv} procedure comprises two phases. In the first phase, named identification, the \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted from region $\mathcal{A}_0$ at the nominal power. Similarly, attenuation values are collected when the \ac{ue} transmits  from the complementary area $\mathcal{A}_1$ and  stored by the \ac{bs} in association to $\mathcal{A}_1$. In the second  phase, named verification, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
+The \ac{irlv} procedure comprises two phases. In the first phase, named identification or training, a trusted \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted by trusted \ac{ue}. Similarly, attenuation values are collected when the trusted \ac{ue} transmits  from the complementary area $\mathcal{A}_1$ and  stored by the \acp{bs} in association to $\mathcal{A}_1 = \mathcal{A} \setminus \mathcal{A}_0$. In the second  phase, named verification or exploitation, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
 
 % The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
 
 \subsection{Channel Model}
 
-We denote as $\bm{x}_{\rm ap}^{(n)} =(X_{\rm ap}^{(n)},Y_{\rm ap}^{(n)})$ the position of the $n$-th \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is denoted as $L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})$. When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n$-th \ac{bs} is
+Let $\bm{x}_{\rm ap}^{(n)} =(X_{\rm ap}^{(n)},Y_{\rm ap}^{(n)})$ be the position of the $n$-th \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is denoted as $L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})$. When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n$-th \ac{bs} in dB is
 \begin{equation}\label{eq: rec pow}
     \left(P_{\rm rc}^{(n)}\right)_{\rm dB}= \left(P_{\rm tx}\right)_{\rm dB} - \left(a^{(n)}\right)_{\rm dB},
 \end{equation}
-where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$. The attenuation coefficient $a^{(n)}$ includes the effects of path-loss and shadowing. Denoting the path-loss coefficient as $P_{\ell}^{(n)}$  the shadowing component is log-normally distributed $\left(s^{(n)}\right)_{\rm dB} \sim \mathcal{N}(0,\sigma_s^2)$ and
+where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$, including the effects of path-loss and shadowing. Denoting the path-loss coefficient as $a_{P_{\ell}}^{(n)}$  the shadowing component is log-normally distributed, i.e., $\left(a_{s}^{(n)}\right)_{\rm dB} \sim \mathcal{N}(0,\sigma_s^2)$, and we have
 \begin{equation}
-    \left(a^{(n)}\right)_{\rm dB} = \left(P_{\ell}^{(n)})\right)_{\rm dB} + \left(s^{(n)}\right)_{\rm dB}.
+    \left(a^{(n)}\right)_{\rm dB} = \left(a_{P_{\ell}}^{(n)}\right)_{\rm dB} + \left(a_s^{(n)}\right)_{\rm dB}.
 \end{equation}
 
-The channel model for path loss and shadowing is derived from \cite{3gpp}. For a \ac{los} link the path loss coefficient in dB is modelled as
+The channel model for path-loss and shadowing is derived from \cite{3gpp}. For a \ac{los} link the path loss coefficient in dB is modelled as
 \begin{equation}\label{eq:los}
-    P_{\ell,LOS}^{(n)} = 20\log_{10}\left(\frac{f 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{c}\right),
+    a_{P_{\ell,LOS}}^{(n)} = 20\log_{10}\left(\frac{f_0 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{c}\right),
 \end{equation}
-where $f$ is the carrier frequency and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
+where $f_0$ is the carrier frequency, and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    P_{\ell, nLOS}^{(n)} = 40\left(1-4 \cdot 10^{-3}  h_{ap}\right) \log_{10}\left (\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right ) \\
-    -18\log_{10}h_{\rm ap}
-    + 21\log_{10}\left(\frac{f}{10^6}\right) + 80,
+    a_{P_{\ell, nLOS}}^{(n)} = 40\left(1-4 \cdot 10^{-3} \left. h_{ap} \right|_{\rm m} \right) \log_{10}\left (\left.\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right|_{\rm m}\right ) \\
+    -18\log_{10}\left.h_{\rm ap}\right|_{\rm m}
+    + 21\log_{10}\left(\frac{\left.f_0\right|_{\rm MHz}}{10^6}\right) + 80,
     \end{split}
 \end{equation}
-where $h_{\rm ap}$ is the \ac{bs} antenna elevation.
+where $\left.h_{\rm ap}\right|_{\rm m}$ is the \ac{bs} antenna elevation in meters.
 
-We assume that shadowing correlation between points $\bm{x}_i$ and $\bm{x}_j$ is
+We assume that correlation between points $\bm{x}_i$ and $\bm{x}_j$ is
 \begin{equation}\label{eq: coor mat}
     \bm{\Sigma}_{(i,j)} = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
 \end{equation}
