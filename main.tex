@@ -246,6 +246,8 @@ Various options are considered in the literature for \ac{nn} training. We consid
 \hatcross{\bm p_{\mathcal{H}|\bm y}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
 \end{equation}
 where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm y}}{g}$.
+
+In the following we show that a \ac{ce} based \ac{nn} is equivalent, in probability and for perfect training, with the \ac{np} solution. First, we prove that the output of the \ac{nn} can be interpreted as the class conditional probability. 
 \begin{theorem}
 Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i.e., with infinite number of training points, layers and neurons. Then
 \begin{equation}
@@ -293,12 +295,13 @@ where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ i
 Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
 \end{proof}
 
-Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while instead it requires a large enough set of training points $S$ to converge.
-However, at convergence the \ac{nn} achieves the same performance of the NP approach. This holds since \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
-\begin{equation}
-\label{eq:relation}
-	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)},	
-\end{equation}  
+Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while, instead, it requires a large enough set of training points $S$ to converge.
+However, at convergence, the \ac{nn} achieves the same performance of the NP approach. This holds since \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, i.e., they provide the same \ac{roc}, with
+\begin{align}
+	\tilde{y} &= p(\mathcal{H}_0|\bm y), \\
+	\label{eq:relation}
+	\theta &= \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)},	
+\end{align}  
 where \eqref{eq:relation} is a direct consequence of the Bayes rule applied as follows 
 \begin{equation}
 	p(\mathcal{H}_0| \bm y) = \frac{1}{1+  \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)} \mathcal{L}^{(\bm y)}}.	
@@ -352,18 +355,18 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 
 We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce} as a proxy of the system performance. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed.
 
-As previously proved, {\ac{ce}} training provides, asymptotically, 
-\begin{equation}
-	\tilde{y} \to p(\mathcal{H}_0|\bm y).	
-\end{equation}
-From the Bayes rule, 
-\begin{equation}
-	p(\mathcal{H}_0| \bm y) = \frac{1}{1+\mathcal{L}^{(\bm y)} \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)}}	
-\end{equation}
-Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
-\begin{equation}
-	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}	
-\end{equation}
+%As previously proved, {\ac{ce}} training provides, asymptotically, 
+%\begin{equation}
+%	\tilde{y} \to p(\mathcal{H}_0|\bm y).	
+%\end{equation}
+%From the Bayes rule, 
+%\begin{equation}
+%	p(\mathcal{H}_0| \bm y) = \frac{1}{1+\mathcal{L}^{(\bm y)} \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)}}	
+%\end{equation}
+%Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
+%\begin{equation}
+%	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}	
+%\end{equation}
 
 Recalling that the training minimization problem is non-convex, the same training set can lead to \acp{nn} with different classification performance. Therefore, among different \acp{nn} trained over the same training set, the one with minimum \ac{ce} is expected to have the best classification performance and hence minimum \ac{auc}. This also involves a significantly lower computational complexity of the overall algorithm, as the computation of the \ac{auc} is not needed for each candidate \ac{nn}.
  
