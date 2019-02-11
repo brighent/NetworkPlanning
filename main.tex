@@ -135,9 +135,9 @@ where $\left.h_{\rm ap}\right|_{\rm m}$ is the \ac{bs} antenna elevation in mete
 
 We assume that correlation between shadowing coefficients $\left( a_{s}(\bm{x}_i)\right)_{\rm dB}$ and $\left( a_{s}(\bm{x}_j)\right)_{\rm dB}$ for two \acp{bs} located in $\bm{x}_i$ and $\bm{x}_j$ when the \ac{ue} is transmitting is
 \begin{equation}\label{eq: coor mat}
-    \mathbb{E}[s(\bm{x}_i)\bm{s}(x_j)] = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
+    \E{\bm x}{a_{s}(\bm{x}_i)a_{s}(\bm{x}_j)} = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
 \end{equation}
-where $d_c$ is the shadowing decorrelation distance. 
+where $d_c$ is the shadowing decorrelation distance and $\E{\bm x}{\cdot}$ is the expected value with respect to the distribution of $\bm x$.
 
 
 \section{In-region Location Verification}\label{sec: ml}
