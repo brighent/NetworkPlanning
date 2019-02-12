@@ -200,19 +200,19 @@ In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref
 \end{equation}
 Therefore, instead of considering $p(y|\mathcal H_i)$ we consider $p(R|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. We first derive the \ac{cdf} of $R$, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$. This is
 \begin{equation}\label{eq:cdf}
-     \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
+     \mathbb{P}(R \le R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
 \end{equation}
 where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
 \begin{equation}\label{eq:num}
-    p_{R|\mathcal{A}_0}(R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
+    p_{R|\mathcal{H}}(R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
 \end{equation}
 Following the same reasoning and considering that the length of the circular sector with radius $R_0$ located in $\mathcal{A}_1$ is $2\pi - \alpha(R_0)$, we obtain the \ac{pdf} of transmission from a distance $R_0$ in $\mathcal{A}_1$ as
 \begin{equation}\label{eq:den}
-     p_{R|\mathcal{A}_1}(R_0|\mathcal{A}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
+     p_{R|\mathcal{H}}(R_0|\mathcal{H}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
 \end{equation}
 From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
-    \mathcal{L}(a)=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c a}{f 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c a}{f 4 \pi})\right)}\right).
+    \mathcal{L}^{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c y}{f 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c y}{f 4 \pi})\right)}\right).
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
