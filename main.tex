@@ -53,6 +53,7 @@
 \newcommand{\hatcross}[2]{\hat{H}_{#1}(#2)}
 \newcommand{\gy}{g(\bm y)}
 \newcommand{\E}[2]{\mathbb{E}_{#1}\left[#2\right]}
+\newcommand{\pr}[1]{\mathbb{P} \left[ #1 \right]}
 
 \newtheorem{theorem}{Theorem}
 
@@ -159,16 +160,17 @@ By using these attenuation training vectors and labels, we aim at building a fun
 \begin{equation}
     \hat{t} = f(\bm{y}) \in \{0,1\}\,
 \end{equation}
-that maps for an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ if \ac{ue} as outside.
+that maps for an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
 
 The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
 \begin{equation}
-P_{\rm FA} ={\mathbb P}(\hat{t} =1 | \mathcal H_0) \end{equation} 
+P_{\rm FA} =\pr{\hat{t} =1 | \mathcal H_0}
+\end{equation} 
 and  
 \begin{equation}
- P_{\rm MD}={\mathbb P}(\hat{t} = 0 | \mathcal H_1).   
+ P_{\rm MD}=\pr{\hat{t} = 0 | \mathcal H_1},   
 \end{equation}
-
+where $\pr{\cdot}$ is the probability function.
 
 \subsection{Test for Known Attenuation Statistics}
 
