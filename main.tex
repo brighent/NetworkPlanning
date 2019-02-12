@@ -241,13 +241,13 @@ where $\sigma(\cdot)$ is the sigmoid function and $L$ is the total number of lay
     0 & \tilde{y} \leq \lambda.
     \end{cases}
 \end{equation}
-By varying $\lambda$ we obtain different values of \ac{fa} and \ac{md} probabilities for this \ac{irlv} test.
+By varying $\lambda$ we obtain different values of $P_{\rm FA}$ and $P_{\rm MD}$ for this \ac{irlv} test.
 
 Various options are considered in the literature for \ac{nn} training. We consider as objective function, the empirical \ac{ce} between the \ac{nn} output and the labels $t_i$ defined as
 \begin{equation}\label{eq:ce}
 \hatcross{\bm p_{\mathcal{H}|\bm y}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
 \end{equation}
-where $\tilde{y}_i$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm y}}{g}$.
+where $\tilde{y}_i = g(\bm a^{(i)})$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm y}}{g}$.
 
 In the following we show that a \ac{ce} based \ac{nn} is equivalent, in probability and for perfect training, with the \ac{np} solution. First, we prove that the output of the \ac{nn} can be interpreted as the class conditional probability. 
 \begin{theorem}
@@ -262,13 +262,13 @@ Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$
 	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} = - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm y \in \mathcal{Y}_0} \log(\gy) 
 		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm y \in \mathcal{Y}_1} \log(1-\gy) \right],	
 \end{equation}
-where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $k \in \{0,1\}$.
+where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
 Let $S \to \infty$. By the strong law of large numbers \cite{etemadi1981elementary}
 \begin{equation}
 	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y + 
 		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right]. 
 \end{equation}
-From Bayes rule
+Rearranging terms with the Bayes rule we get
 \begin{equation}
 \label{eq:dim1}
 \lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} = - \left\{ \int_{\mathcal{Y}} \bigl[ p(\mathcal{H}_0|\bm y) \log(\gy) + 
@@ -278,8 +278,8 @@ We introduce the Bernoulli random variable $\xi$ with alphabet $ \{0,1\}$ and \a
 \begin{subequations}
 \label{eq:q}
 \begin{align}
-	q_0 &\triangleq p(\xi=0)=\gy \\
-	q_1 &\triangleq p(\xi=1)=1-\gy.
+	q_0 &\triangleq \pr{\xi=0}=\gy \\
+	q_1 &\triangleq \pr{\xi=1}=1-\gy.
 \end{align}
 \end{subequations}
 Note that $\bm q$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis. Let also 
@@ -292,7 +292,7 @@ By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
 	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =	\E{\bm y}{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
 		\E{\bm y}{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
 \end{equation}
-where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pmd} $\bm c$ and $\bm d$ and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
+where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pmd} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
 
 Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
 \end{proof}
