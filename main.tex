@@ -154,7 +154,7 @@ In the training phase the \ac{ue} transmits from $S$ locations. For transmission
 \begin{equation}
     \bm{a}^{(i)}=[a_1^{(i)},...,a_{N_{\rm AP}}^{(i)}]
 \end{equation}
-be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. We collect all labels into the $S$-size vector $\bm{t}=[t_1,...,t_S]$ \hl{Never used?}.
+be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. 
 
 By using these attenuation training vectors and labels, we aim at building a function
 \begin{equation}
@@ -192,7 +192,7 @@ where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa
 \label{sec:los}
 We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm{y})$. 
 
-Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
+Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
 
 In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $y$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
@@ -216,6 +216,14 @@ From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of t
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
+
+\begin{figure} 
+    \centering
+    \includegraphics[width=0.5\columnwidth]{simpleScen.eps}
+    \caption{Realization of the scenario over which \ac{np} hypothesis testing is performed: the \ac{ue} transmits message toward the \ac{bs} located at the center of the overall circular area. }
+    \label{fig:scen}
+\end{figure}
+
 \subsection{Neural Network Implementation}\label{sec:nn}
 
 Under more complicated scenarios, it becomes hard to obtain close-form expressions for the \ac{llr}. Therefore, we propose to use a \ac{ml} approach, where in the identification phase a \ac{nn} is trained with attenuation vectors $\bm{a}^{(i)}$ according to the labels $t_i \in \{0,1\}$. In the verification phase the \ac{nn} is used on the test attenuation vectors $\bm{y}$ to provide the decision $\hat{t} \in \{0,1\}$. We define $g(\cdot)$ to be the function implemented by the \ac{nn} such that
@@ -225,15 +233,15 @@ Under more complicated scenarios, it becomes hard to obtain close-form expressio
 
 A feed-forward \ac{nn} processes the input in stages, named layers, where the output of one layer is the input of the next layer. The input of the \ac{nn} is $\bm{y}^{(0)} = \bm{y}$, and layer $\ell-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ scalar functions named neurons. The output of the $n$-th neuron of the $\ell$-th layer is
 \begin{equation}\label{eq:nonLin}
-y_n^{(\ell)} = \psi\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
+y_n^{(\ell)} = \sigma\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
 \end{equation}
-where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\psi(\cdot)$ is a fixed pre-determined activation function. 
+where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determined in the training phase, and $\sigma(\cdot)$ is the sigmoid activation function. 
 %The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. 
 The last layer comprises only one neuron, $y^{(L)}$, and the final output of the \ac{nn} is the scalar 
 \begin{equation}
 	\tilde{y} \triangleq \sigma(y^{(L)}),	
 \end{equation}
-where $\sigma(\cdot)$ is the sigmoid function and $L$ is the total number of layers. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
+where $L$ is the total number of layers. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
 \begin{equation}
 \label{eq:decNN}
     g(\bm{y}) = \begin{cases}
@@ -346,7 +354,7 @@ where \eqref{eq:relation} is a direct consequence of the Bayes rule applied as f
 \section{Network Planning}\label{sec:bsPos}
 
 As the attenuation depends on the position of the \acp{bs} and on the surrounding environment, the performance of the authentication system depends on the number of \acp{bs} and on their location. In this Section, we derive an approach to optimally locate \acp{bs} (\emph{network planning}) so that the authentication system attains the best performance. 
-\hl{Secondo me togliere questa frase.} The idea is to exploit the \ac{nn} in order to obtain a proxy of the performance of the \ac{irlv} system and hence find the optimal location of the \acp{bs}, such that the resulting system attains the best classification performance.
+
 
 The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value, provided vy \ac{np}. We consider as performance metric the \ac{roc} curve, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$, but we instead want a single measure capturing the whole behaviour of the curve. We hence resort to the \ac{roc} \ac{auc} \cite{hanley-82}, defined as 
 \begin{equation}
@@ -356,25 +364,10 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
 However, in order to compute the \ac{auc} we must run the \ac{nn} over a set of test attenuation vectors multiple times with different thresholds in order to estimate the \ac{roc} and compute numerically its integral.
 
-\hl{Proposta:} We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce}, readily provided at the end of training, as a proxy of the system performance, so that we don't need to estimate the \ac{roc} and compute the \ac{auc}. This is motivated by Theorem 1 as the lower \ac{ce}, the more a \ac{nn} approaches \ac{np}, which is the optimal solution. 
+We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce}, readily provided at the end of training, as a proxy of the system performance, so that we don't need to estimate the \ac{roc} and compute the \ac{auc}. This is motivated by Theorem 1 as the lower \ac{ce}, the more a \ac{nn} approaches \ac{np}, which is the optimal solution. 
 Recalling that the training minimization problem is non-convex, the same training set can lead to \acp{nn} with different classification performance and hence different \ac{auc}. However we keep the one with minimum \ac{ce}, which is expected to have the minimum \ac{auc}.
 
-We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce} as a proxy of the system performance. This metric is immediately provided at the end of the identification phase, when the learning of the \ac{nn} (which is based on the \ac{ce}) is completed.
 
-%As previously proved, {\ac{ce}} training provides, asymptotically, 
-%\begin{equation}
-%	\tilde{y} \to p(\mathcal{H}_0|\bm y).	
-%\end{equation}
-%From the Bayes rule, 
-%\begin{equation}
-%	p(\mathcal{H}_0| \bm y) = \frac{1}{1+\mathcal{L}^{(\bm y)} \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)}}	
-%\end{equation}
-%Hence, \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, with
-%\begin{equation}
-%	\theta = \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)}	
-%\end{equation}
-
-Recalling that the training minimization problem is non-convex, the same training set can lead to \acp{nn} with different classification performance and hence different \ac{auc}. However, among all different \acp{nn} trained over the same training set, the one with minimum \ac{ce} is expected to have the best classification performance and hence minimum \ac{auc}. This also leads to a significantly lower computational complexity of the overall algorithm, as the computation of the \ac{auc} is not needed for each candidate \ac{nn}.
  
 % Since $t$ and $\hat{t}$ are Bernoulli variables, the \ac{kl} between $t$ and $\hat{t}$ can be written as 
 %\begin{equation}
@@ -485,11 +478,10 @@ Notice that, as the optimization problem is non-convex, solving \ac{pso} is simi
 
 \section{Numerical Results}\label{sec: nr}
 
-We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. A sigmoid activation function at the hidden layer and a tanh \hl{Abbiamo definito solo sigma} activation function at the output layer have been used, with $10^6$ training points  and $10^6$ testing points. 
+We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. Training and testing have been performed with $10^6$ points each. 
 
 Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
- \hl{Togliere questo?} This is already an indication that the \ac{nn} with sufficiently long training and a large enough number of neurons achieves optimal performance.
-Further investigation on the connection between these two approaches are left for future  investigation.
+
  
  \begin{figure}[h]
      \centering
@@ -525,10 +517,10 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} 
 
 We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. There exists a variety of implementations of the \ac{pso}, but the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. In order to validate the use of the \ac{ce} as a proxy for the \ac{auc}, we compare the performance of Algorithm 1 using $\mathcal{B}=$\ac{ce} and using $\mathcal{B}=$\ac{auc}. The overall performance metric is the \ac{auc}.
 
-\hl{Proposta:} Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. 
-Note that the result of Theorem 1 holds asymptotically and with perfect training (in terms of training set, number of layers and neurons), which are conditions that our experiments do not satisfy. This explains the difference between the convergence \ac{auc} values for the two algorithms. However, this difference is small ($\sim 10^{-4}$  )
+Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. 
+Note that the result of Theorem 1 holds asymptotically and with perfect training (in terms of training set, number of layers and neurons), which are conditions that our experiments do not satisfy. This explains the following two observations. The former is that there is a  difference between the \ac{auc} convergence values for the two algorithms. However, this difference is small ($\sim 10^{-4}$). The latter is that the \ac{auc}-based algorithm converges earlier, at iteration 3, than the \ac{ce}-based algorithm, at iteration 5. This last point can be explained by the fact that full convergence has not been reached by the \ac{nn} due to the finite number of neurons and samples in the training set. Therefore the obtained \ac{ce} is an approximation of the selected objective function, requiring more gradient descent steps than those required by the direct optimization of the \ac{auc}.   
 
-Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. Recalling that \eqref{eq:final} is obtained as asymptotic result, the fact that the \ac{ce} based solution requires a larger number of iteration to reach the minimum is due to the fact that results obtained by simulations consider finite number of neurons and finite training set. However we notice that also in the finite case the \ac{ce} minimization provides a good approximation of the classification performance of the network.
+%Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. Recalling that \eqref{eq:final} is obtained as asymptotic result, the fact that the \ac{ce} based solution requires a larger number of iteration to reach the minimum is due to the fact that results obtained by simulations consider finite number of neurons and finite training set. However we notice that also in the finite case the \ac{ce} minimization provides a good approximation of the classification performance of the network.
 
  
 % Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce} as objective function in Algorithm 1. We note that in half of the cases only four iterations are performed using \ac{ce} and then the rest of the iterations are using the \ac{auc} as a target function. Since from Fig. \ref{fig:CEvsAUC} we note that in five  iterations Algorithm 1 is on average already quite close to convergence we can conclude that the number of iterations in the \ac{auc} stage is very small in most cases. This does not occur for the pure \ac{auc} solution, where a higher number of \ac{auc} iterations is needed to achieve convergence (see  Fig. \ref{fig:CEvsAUC}).
