@@ -255,6 +255,7 @@ Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i
 \begin{equation}
 	\gy = p(\mathcal{H}_0|\bm y)	
 \end{equation}
+almost surely.
 \end{theorem}
 \begin{proof}
 Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
@@ -265,9 +266,11 @@ Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$
 where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
 Let $S \to \infty$. By the strong law of large numbers \cite{etemadi1981elementary}
 \begin{equation}
+\label{eq:as}
 	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y + 
-		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right]. 
+		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right].
 \end{equation}
+Starting from \eqref{eq:as} included, all subsequent equalities are intended to hold in probability, i.e., \textit{almost surely}, as defined in the strong law of large number formulation.
 Rearranging terms with the Bayes rule we get
 \begin{equation}
 \label{eq:dim1}
@@ -292,9 +295,9 @@ By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
 	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =	\E{\bm y}{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
 		\E{\bm y}{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
 \end{equation}
-where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pmd} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
+where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pdf} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
 
-Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained when $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, for $\bm q = \bm p_{\mathcal{H}|\bm y}$.
+Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained for $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, that is when $\bm q = \bm p_{\mathcal{H}|\bm y}$.
 \end{proof}
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while, instead, it requires a large enough set of training points $S$ to converge.
