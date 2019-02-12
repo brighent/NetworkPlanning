@@ -154,13 +154,13 @@ In the training phase the \ac{ue} transmits from $S$ locations. For transmission
 \begin{equation}
     \bm{a}^{(i)}=[a_1^{(i)},...,a_{N_{\rm AP}}^{(i)}]
 \end{equation}
-be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. We collect all labels into the $S$-size vector $\bm{t}=[t_1,...,t_S]$.
+be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. We collect all labels into the $S$-size vector $\bm{t}=[t_1,...,t_S]$ \hl{Never used?}.
 
 By using these attenuation training vectors and labels, we aim at building a function
 \begin{equation}
     \hat{t} = f(\bm{y}) \in \{0,1\}\,
 \end{equation}
-that maps for an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
+that maps an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
 
 The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
 \begin{equation}
@@ -174,11 +174,11 @@ where $\pr{\cdot}$ is the probability function.
 
 \subsection{Test for Known Attenuation Statistics}
 
-The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr} of the attenuation vector
+The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr}
 \begin{equation}\label{eq:lr}
     \mathcal{L}^{(\bm{y})}=\log\left(\frac{p(\bm{y}|\mathcal{H}_0)}{p(\bm{y}|\mathcal{H}_1)}\right)\,,
 \end{equation}
-where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} of observing $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
+where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
 \begin{equation}
 \label{eq:thrOpt}
     \hat{t} = f(\bm{y}) = \begin{cases}
@@ -194,11 +194,11 @@ We now describe an example of application of the \ac{np} test, where we can easi
 
 Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
 
-In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
+In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $y$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
-    R = \frac{c a}{f 4 \pi}.
+    R = \frac{c y}{f 4 \pi}.
 \end{equation}
-Therefore instead of considering $p(y|\mathcal H_i)$ we consider $p(R_0|\mathcal H_i)$, where $R_0$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. In order to obtain this \ac{pdf} we first note obtain the \ac{cdf} at $R_0$ of the distance from the \ac{bs}, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$ is
+Therefore, instead of considering $p(y|\mathcal H_i)$ we consider $p(R|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the center corresponding to attenuation $y$. We first derive the \ac{cdf} of $R$, i.e.,  the probability that the \ac{ue} is located at a distance $R\le R_0$ in $\mathcal{A}_0$. This is
 \begin{equation}\label{eq:cdf}
      \mathbb{P}(R \le R_0|\mathcal{A}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
 \end{equation}
