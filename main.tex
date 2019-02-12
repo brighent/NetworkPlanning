@@ -353,7 +353,7 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
 . However, note that in order to compute the \ac{auc} we must run the \ac{nn} over a set of test attenuation vectors multiple times with different threshold in order to reconstruct the \ac{roc} and compute a numerical approximation of its integral.
 
-We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce} as a proxy of the system performance. This metric is immediately provided at the end of the identification phase, where the learning of the \ac{nn} (which is based on the \ac{ce}) is completed.
+We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce} as a proxy of the system performance. This metric is immediately provided at the end of the identification phase, when the learning of the \ac{nn} (which is based on the \ac{ce}) is completed.
 
 %As previously proved, {\ac{ce}} training provides, asymptotically, 
 %\begin{equation}
