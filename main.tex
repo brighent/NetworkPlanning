@@ -346,7 +346,7 @@ where \eqref{eq:relation} is a direct consequence of the Bayes rule applied as f
 \section{Network Planning}\label{sec:bsPos}
 
 As the attenuation depends on the position of the \acp{bs} and on the surrounding environment, the performance of the authentication system depends on the number of \acp{bs} and on their location. In this Section, we derive an approach to optimally locate \acp{bs} (\emph{network planning}) so that the authentication system attains the best performance. 
-\hl{hmm} The idea is to exploit the \ac{nn} in order to obtain a proxy of the performance of the \ac{irlv} system and hence find the optimal location of the \acp{bs}, such that the resulting system attains the best classification performance.
+\hl{Secondo me togliere questa frase.} The idea is to exploit the \ac{nn} in order to obtain a proxy of the performance of the \ac{irlv} system and hence find the optimal location of the \acp{bs}, such that the resulting system attains the best classification performance.
 
 The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value, provided vy \ac{np}. We consider as performance metric the \ac{roc} curve, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$, but we instead want a single measure capturing the whole behaviour of the curve. We hence resort to the \ac{roc} \ac{auc} \cite{hanley-82}, defined as 
 \begin{equation}
