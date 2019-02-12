@@ -485,9 +485,11 @@ Notice that, as the optimization problem is non-convex, solving \ac{pso} is simi
 
 \section{Numerical Results}\label{sec: nr}
 
-We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. A sigmoid activation function at the hidden layer and a tanh activation function at the output layer have been used, with $10^6$ training points  and $10^6$ testing points. 
+We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. A sigmoid activation function at the hidden layer and a tanh \hl{Abbiamo definito solo sigma} activation function at the output layer have been used, with $10^6$ training points  and $10^6$ testing points. 
 
-Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. We see that, even with a small number of neurons, in this simple problem the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is already an indication that the \ac{nn} with sufficiently long training and a large enough number of neurons achieves optimal performance. Further investigation on the connection between these two approaches are left for future  investigation.
+Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
+ \hl{Togliere questo?} This is already an indication that the \ac{nn} with sufficiently long training and a large enough number of neurons achieves optimal performance.
+Further investigation on the connection between these two approaches are left for future  investigation.
  
  \begin{figure}[h]
      \centering
@@ -497,7 +499,7 @@ Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and wit
  \end{figure}
 
  
-In order to test the \ac{nn} approach in a more challenging scenario, we consider a network with $N_{\rm AP}=5$ \acp{bs}, each  characterized by a different  shadowing map, obtained with the model described in Section II, for a square area with two streets dividing the square into four quadrants with buildings, and the safe area $\mathcal A_0$  located in quadrant, inside the building.
+In order to test the \ac{nn} approach in a more challenging scenario, we consider a network with $N_{\rm AP}=5$ \acp{bs}, each  characterized by a different  shadowing map, obtained with the model described in Section II, for a square area with two streets dividing the square into four quadrants with buildings, and the safe area $\mathcal A_0$  located in a quadrant, inside the building.
 
 %Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the area $\mathcal{A}$. 
 %We further assume that inside $\mathcal{A}$ there are  two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$, representing for example streets surrounded by buildings. We indicate region $\mathcal A_0$   by the red line.
@@ -521,9 +523,12 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} 
 
 \subsection{Network Planning Performance}
 
-We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. Though there exists a variety of implementations of the \ac{pso} the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. In order to validate the use of the \ac{ce} as a proxy for the \ac{auc}, we compare the performance of Algorithm 1 using $\mathcal{B}=$\ac{ce} and using $\mathcal{B}=$\ac{auc}. The overall performance metric is the \ac{auc}.
+We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. There exists a variety of implementations of the \ac{pso}, but the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. In order to validate the use of the \ac{ce} as a proxy for the \ac{auc}, we compare the performance of Algorithm 1 using $\mathcal{B}=$\ac{ce} and using $\mathcal{B}=$\ac{auc}. The overall performance metric is the \ac{auc}.
 
-Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increase. Recalling that \ref{eq:final} is obtained as asymptotic result, the fact that the \ac{ce} based solution requires a larger number of iteration to reach the minimum is due to the fact that results obtained by simulations consider finite number of neurons and finite training set. However we notice that also in the finite case the \ac{ce} minimization provides a good approximation of the classification performance of the network.
+\hl{Proposta:} Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. 
+Note that the result of Theorem 1 holds asymptotically and with perfect training (in terms of training set, number of layers and neurons), which are conditions that our experiments do not satisfy. This explains the difference between the convergence \ac{auc} values for the two algorithms. However, this difference is small ($\sim 10^{-4}$  )
+
+Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. Recalling that \eqref{eq:final} is obtained as asymptotic result, the fact that the \ac{ce} based solution requires a larger number of iteration to reach the minimum is due to the fact that results obtained by simulations consider finite number of neurons and finite training set. However we notice that also in the finite case the \ac{ce} minimization provides a good approximation of the classification performance of the network.
 
  
 % Fig. \ref{fig:cdf} shows the \ac{cdf} of the number of  iterations using \ac{ce} as objective function in Algorithm 1. We note that in half of the cases only four iterations are performed using \ac{ce} and then the rest of the iterations are using the \ac{auc} as a target function. Since from Fig. \ref{fig:CEvsAUC} we note that in five  iterations Algorithm 1 is on average already quite close to convergence we can conclude that the number of iterations in the \ac{auc} stage is very small in most cases. This does not occur for the pure \ac{auc} solution, where a higher number of \ac{auc} iterations is needed to achieve convergence (see  Fig. \ref{fig:CEvsAUC}).
@@ -546,7 +551,7 @@ Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{ps
 \label{sec:conc}
 %\balance
 
-In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and proposed a \ac{ml} solution. We showed that the \ac{nn} implementation achieves the same performance of the optimal \ac{np} test for a simple case, and we assessed the effects of the training set size over the \ac{roc}. We then proposed a \ac{pso}  algorithm for the  optimal \ac{bs} positioning, establishing the connection of two objective functions with the \ac{roc}. We then showed by numerical results the effectiveness of the proposed solution in terms of \ac{auc} of the \ac{roc}.
+In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and proposed a \ac{ml} solution. We showed that the \ac{nn} implementation achieves the same performance of the optimal \ac{np} test for a simple case, and we assessed the effects of the training set size over the \ac{roc} for a more complicated scenario. We then proposed a \ac{pso}  algorithm for the  optimal \acp{bs} positioning, establishing the connection of two objective functions with the \ac{roc}. We then showed by numerical results the effectiveness of the proposed solution in terms of \ac{auc} of the \ac{roc}.
 
 
 \renewcommand*{\bibfont}{\footnotesize}
