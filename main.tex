@@ -199,7 +199,7 @@ where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa
 \label{sec:los}
 We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm{y})$. 
 
-Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{C}$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{C}$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{C}$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{C} \setminus \mathcal{A}_0$.
+Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
 
 In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $y$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
@@ -209,7 +209,7 @@ Therefore, instead of considering $p(y|\mathcal H_i)$ we consider $p(R|\mathcal 
 \begin{equation}\label{eq:cdf}
      \mathbb{P}(R \le R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
 \end{equation}
-where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
+where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
 \begin{equation}\label{eq:num}
     p_{R|\mathcal{H}}(R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
 \end{equation}
@@ -219,7 +219,7 @@ Following the same reasoning and considering that the length of the circular sec
 \end{equation}
 From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
-    \mathcal{L}^{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c y}{f_0 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c y}{f 4 \pi})\right)}\right).
+    \mathcal{L}{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha \left(\frac{c y}{f_0 4 \pi}\right)}{|\mathcal{A}_0|\left(2\pi-\alpha\left(\frac{c y}{f_0 4 \pi}\right)\right)}\right).
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
@@ -233,12 +233,12 @@ From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of t
 
 \subsection{Neural Network Implementation}\label{sec:nn}
 
-Under more complicated scenarios, it becomes hard to obtain close-form expressions for the \ac{llr}. Therefore, we propose to use a \ac{ml} approach, where in the identification phase a \ac{nn} is trained with attenuation vectors $\bm{a}^{(i)}$ according to the labels $t_i \in \{0,1\}$. In the verification phase the \ac{nn} is used on the test attenuation vectors $\bm{y}$ to provide the decision $\hat{t} \in \{0,1\}$. We define $g(\cdot)$ to be the function implemented by the \ac{nn} such that
+Under more complicated scenarios, it becomes hard to obtain close-form expressions for the \ac{llr}. Therefore, we propose to use a \ac{ml} approach, where in the identification phase a \ac{nn} is trained with attenuation vectors $\bm{a}^{(i)}$ according to the labels $t_i \in \{0,1\}$. In the verification phase the \ac{nn} is used on the test attenuation vectors $\bm a$ to provide the decision $\hat{t} \in \{0,1\}$. We define $g(\cdot)$ to be the function implemented by the \ac{nn} such that
  \begin{equation}
- 	\hat{t} = g(\bm{y}).	
+ 	\hat{t} = g(\bm a).	
  \end{equation}
 
-A feed-forward \ac{nn} processes the input in stages, named layers, where the output of one layer is the input of the next layer. The input of the \ac{nn} is $\bm{y}^{(0)} = \bm{y}$, and layer $\ell-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ scalar functions named neurons. The output of the $n$-th neuron of the $\ell$-th layer is
+A feed-forward \ac{nn} processes the input in stages, named layers, where the output of one layer is the input of the next layer. The input of the \ac{nn} is $\bm{y}^{(0)} = \bm{a}$, and layer $\ell-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ scalar functions named neurons. The output of the $n$-th neuron of the $\ell$-th layer is
 \begin{equation}\label{eq:nonLin}
 y_n^{(\ell)} = \sigma\left( \bm{w}_n^{(\ell -1)}\bm{y}^{(\ell-1)}+b_n^{(\ell)} \right),
 \end{equation}
@@ -246,23 +246,23 @@ where $\bm{w}_n^{(\ell -1)}$ and $b_n^{(\ell)}$ are coefficients to be determine
 %The neuron maps via  $\psi$ a  linear combination with weights $\bm{w}_n^{(\ell -1)}\in \mathbb{R}^{1\times N^{(\ell-1)}}$ of the outputs $\bm{y}^{(\ell-1)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$ of the previous layer, plus a bias $b_n^{(\ell)} \in \mathbb{R}^{N^{(\ell-1)} \times 1 }$. 
 The last layer comprises only one neuron, $y^{(L)}$, and the final output of the \ac{nn} is the scalar 
 \begin{equation}
-	\tilde{y} \triangleq \sigma(y^{(L)}),	
+	\tilde{t}(\bm a) \triangleq \sigma(y^{(L)}),	
 \end{equation}
 where $L$ is the total number of layers. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
 \begin{equation}
 \label{eq:decNN}
-    g(\bm{y}) = \begin{cases}
-    1 & \tilde{y} > \lambda \\
-    0 & \tilde{y} \leq \lambda.
+    g(\bm{a}) = \begin{cases}
+    1 & \tilde{t}(\bm a) > \lambda \\
+    0 & \tilde{t}(\bm a) \leq \lambda.
     \end{cases}
 \end{equation}
 By varying $\lambda$ we obtain different values of $P_{\rm FA}$ and $P_{\rm MD}$ for this \ac{irlv} test.
 
 Various options are considered in the literature for \ac{nn} training. We consider as objective function, the empirical \ac{ce} between the \ac{nn} output and the labels $t_i$ defined as
 \begin{equation}\label{eq:ce}
-\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
+\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{t}(\bm a^{(i)}) +\left(1-\tilde{t}(\bm a^{(i)})\right)\log\left(1-\tilde{y}_i\right)\right].
 \end{equation}
-where $\tilde{y}_i = g(\bm a^{(i)})$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm a}}{g}$.
+Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm a}}{g}$.
 
 In the following we show that a \ac{ce} based \ac{nn} is equivalent, in probability and for perfect training, with the \ac{np} solution. First, we prove that the output of the \ac{nn} can be interpreted as the class conditional probability. 
 \begin{theorem}
