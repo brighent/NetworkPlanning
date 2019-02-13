@@ -1,4 +1,4 @@
-\documentclass[conference,draftcls,onecolumn]{IEEEtran}
+\documentclass[conference,final]{IEEEtran}
 
 
 \usepackage[utf8]{inputenc}
@@ -196,7 +196,7 @@ Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let u
 
 In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $y$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
-    R = \frac{c y}{f 4 \pi}.
+    R = \frac{c y}{f_0 4 \pi}.
 \end{equation}
 Therefore, instead of considering $p(y|\mathcal H_i)$ we consider $p(R|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the \ac{bs} and corresponding to attenuation $y$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le R_0$ from the \ac{bs}. This is
 \begin{equation}\label{eq:cdf}
@@ -212,14 +212,14 @@ Following the same reasoning and considering that the length of the circular sec
 \end{equation}
 From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
-    \mathcal{L}^{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c y}{f 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c y}{f 4 \pi})\right)}\right).
+    \mathcal{L}^{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha(\frac{c y}{f_0 4 \pi})}{|\mathcal{A}_0|\left(2\pi-\alpha(\frac{c y}{f 4 \pi})\right)}\right).
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
 
 \begin{figure} 
     \centering
-    \includegraphics[width=0.5\columnwidth]{simpleScen.eps}
+    \includegraphics[width=0.9\columnwidth]{simpleScen.eps}
     \caption{Realization of the scenario over which \ac{np} hypothesis testing is performed: the \ac{ue} transmits message toward the \ac{bs} located at the center of the overall circular area. }
     \label{fig:scen}
 \end{figure}
@@ -268,14 +268,14 @@ almost surely.
 \begin{proof}
 Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
 \begin{equation}
-	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} = - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm y \in \mathcal{Y}_0} \log(\gy) 
+	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =  - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm y \in \mathcal{Y}_0} \log(\gy) 
 		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm y \in \mathcal{Y}_1} \log(1-\gy) \right],	
 \end{equation}
 where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
 Let $S \to \infty$. By the strong law of large numbers \cite{etemadi1981elementary}
 \begin{equation}
 \label{eq:as}
-	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y + 
+	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y +  
 		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right].
 \end{equation}
 Starting from \eqref{eq:as} included, all subsequent equalities are intended to hold in probability, i.e., \textit{almost surely}, as defined in the strong law of large number formulation.
@@ -477,6 +477,10 @@ The proposed \ac{pso}-based network planning algorithm is reported in Algorithm 
 Notice that, as the optimization problem is non-convex, solving \ac{pso} is similar to a multi-start optimization considering $P$ different starting points, which is a standard method used to avoid local minimum solutions. As the number $P$ increases the probability of resolving to a local solution is reduced.
 
 \section{Numerical Results}\label{sec: nr}
+
+The considered scenario is depicted in Fig. \ref{fig:scen5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is is identified by the lower left building. Roads are considered to be \ac{los} paths. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
+
+
 \subsection{In-region location verification}
 We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. Training and testing have been performed with $10^6$ points each. 
 
@@ -508,8 +512,15 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\columnwidth]{mean_maps_2.eps}
+    \includegraphics[width=0.9\columnwidth]{res_avg_nNeur_1e5.eps}
     \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $q$ training points.}
+    \label{fig:n_train}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{res_avg_nTrain.eps}
+    \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $\mathcal{S}$ training points.}
     \label{fig:n_train}
 \end{figure}
 
