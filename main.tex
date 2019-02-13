@@ -51,7 +51,7 @@
 
 \newcommand{\cross}[2]{H_{#1}(#2)}
 \newcommand{\hatcross}[2]{\hat{H}_{#1}(#2)}
-\newcommand{\gy}{g(\bm y)}
+\newcommand{\gy}{g(\bm a)}
 \newcommand{\E}[2]{\mathbb{E}_{#1}\left[#2\right]}
 \newcommand{\pr}[1]{\mathbb{P} \left[ #1 \right]}
 
@@ -113,30 +113,36 @@ The \ac{irlv} procedure comprises two phases. In the first phase, named identifi
 
 Let $\bm{x}_{\rm ap}^{(n)} =(X_{\rm ap}^{(n)},Y_{\rm ap}^{(n)})$ be the position of the $n$-th \ac{bs}. For a \ac{ue} located at $\bm{x}_{\rm ue}=(X_u,Y_u)$, its distance from \ac{bs} $n$ is denoted as $L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})$. When a \ac{ue} transmits with power $P_{\rm tx}$, the received power at the $n$-th \ac{bs} in dB is
 \begin{equation}\label{eq: rec pow}
-    \left(P_{\rm rc}^{(n)}\right)_{\rm dB}= \left(P_{\rm tx}\right)_{\rm dB} - \left(a^{(n)}\right)_{\rm dB},
+    \left(P_{\rm rc}{(n)}\right)_{\rm dB}= \left(P_{\rm tx}\right)_{\rm dB} - \left(a{(n)}\right)_{\rm dB},
 \end{equation}
-where $a^{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$, including the effects of path-loss and shadowing. Denoting the path-loss coefficient as $a_{P_{\ell}}^{(n)}$  the shadowing component is log-normally distributed, i.e., $\left(a_{s}^{(n)}\right)_{\rm dB} \sim \mathcal{N}(0,\sigma_s^2)$, and we have
+where $a{(n)}$ is the attenuation incurred by the transmitted signal to \ac{bs} $n$, including the effects of path-loss and shadowing. Let 
 \begin{equation}
-    \left(a^{(n)}\right)_{\rm dB} = \left(a_{P_{\ell}}^{(n)}\right)_{\rm dB} + \left(a_s^{(n)}\right)_{\rm dB}.
+\bm a = [a(1) \ a(2) \ \dots a(N_{\rm AP})]
+\end{equation} 
+collect attenuation values from all \ac{bs}.
+
+Denoting the path-loss coefficient as $a_{P_{\ell}}{(n)}$  the shadowing component is log-normally distributed, i.e., $\left(a_{s}{(n)}\right)_{\rm dB} \sim \mathcal{N}(0,\sigma_s^2)$, and we have
+\begin{equation}
+    \left(a{(n)}\right)_{\rm dB} = \left(a_{P_{\ell}}{(n)}\right)_{\rm dB} + \left(a_s{(n)}\right)_{\rm dB}.
 \end{equation}
 
 The channel model for path-loss and shadowing is derived from \cite{3gpp}. For a \ac{los} link the path loss coefficient in dB is modelled as
 \begin{equation}\label{eq:los}
-    a_{P_{\ell,LOS}}^{(n)} = 20\log_{10}\left(\frac{f_0 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{c}\right),
+    a_{P_{\ell,LOS}}{(n)} = 20\log_{10}\left(\frac{f_0 4\pi L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{c}\right),
 \end{equation}
 where $f_0$ is the carrier frequency, and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    a_{P_{\ell, nLOS}}^{(n)} = 40\left(1-4 \cdot 10^{-3} \left. h_{ap} \right|_{\rm m} \right) \log_{10}\left (\left.\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right|_{\rm m}\right ) \\
+    a_{P_{\ell, nLOS}}{(n)} = 40\left(1-4 \cdot 10^{-3} \left. h_{ap} \right|_{\rm m} \right) \log_{10}\left (\left.\frac{L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})}{10^3}\right|_{\rm m}\right ) \\
     -18\log_{10}\left.h_{\rm ap}\right|_{\rm m}
     + 21\log_{10}\left(\frac{\left.f_0\right|_{\rm MHz}}{10^6}\right) + 80,
     \end{split}
 \end{equation}
 where $\left.h_{\rm ap}\right|_{\rm m}$ is the \ac{bs} antenna elevation in meters, $\left. f_0 \right|_{\rm MHz}$ is the carrier frequency in MHz, and $\left. L(\bm{x}_{\rm ue},\bm{x}_{\rm ap}^{(n)})\right|$ ios the \ac{ue}-\ac{bs} distance in meters.
 
-We assume that correlation between shadowing coefficients $\left( a_{s}(\bm{x}_i)\right)_{\rm dB}$ and $\left( a_{s}(\bm{x}_j)\right)_{\rm dB}$ for two \acp{bs} located in $\bm{x}_i$ and $\bm{x}_j$ when the \ac{ue} is transmitting is
+We assume that correlation between shadowing coefficients $\left( a_{s}(i)\right)_{\rm dB}$ and $\left( a_{s}(j)\right)_{\rm dB}$ for two \acp{bs} located in $\bm{x}_i$ and $\bm{x}_j$ when the \ac{ue} is transmitting is
 \begin{equation}\label{eq: coor mat}
-    \E{\bm x}{a_{s}(\bm{x}_i)a_{s}(\bm{x}_j)} = \sigma_s^2e^{-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}},
+    \E{\bm x}{a_{s}(i)a_{s}(j)} = \sigma_s^2\exp \left({-\frac{L(\bm{x}_i,\bm{x}_j)}{d_c}}\right),
 \end{equation}
 where $d_c$ is the shadowing decorrelation distance and $\E{\bm x}{\cdot}$ is the expected value with respect to the distribution of $\bm x$.
 
@@ -152,15 +158,16 @@ Let us define the hypothesis of the \ac{irlv} problem as
 
 In the training phase the \ac{ue} transmits from $S$ locations. For transmission $i=1,...,S$, let
 \begin{equation}
-    \bm{a}^{(i)}=[a_1^{(i)},...,a_{N_{\rm AP}}^{(i)}]
+    \bm{a}^{(i)}=[a^{(i)}(1),...,a^{(i)}(N_{\rm AP})]
 \end{equation}
-be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. 
+be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. Let also $\mathcal{T} =
+ \{\bm{a}^{(1)}, \dots , \bm{a}^{(S)} \}$.
 
 By using these attenuation training vectors and labels, we aim at building a function
 \begin{equation}
-    \hat{t} = f(\bm{y}) \in \{0,1\}\,
+    \hat{t} = g(\bm{y}) \in \{0,1\}\,
 \end{equation}
-that maps an attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
+that maps any attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
 
 The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
 \begin{equation}
@@ -176,17 +183,17 @@ where $\pr{\cdot}$ is the probability function.
 
 The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr}
 \begin{equation}\label{eq:lr}
-    \mathcal{L}^{(\bm{y})}=\log\left(\frac{p(\bm{y}|\mathcal{H}_0)}{p(\bm{y}|\mathcal{H}_1)}\right)\,,
+    \mathcal{L}{(\bm{y})}=\log\left(\frac{p(\bm{y}|\mathcal{H}_0)}{p(\bm{y}|\mathcal{H}_1)}\right)\,,
 \end{equation}
 where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
 \begin{equation}
 \label{eq:thrOpt}
-    \hat{t} = f(\bm{y}) = \begin{cases}
-    0 & \mathcal{L}^{(\bm{y})} \geq \theta\,, \\ 
-    1 & \mathcal{L}^{(\bm{y})} < \theta\,, 
+    \hat{t} = g(\bm{y}) = \begin{cases}
+    0 & \mathcal{L}{(\bm{y})} \geq \theta\,, \\ 
+    1 & \mathcal{L}{(\bm{y})} < \theta\,, 
     \end{cases}
 \end{equation}
-where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa} probability. This test ensures that for the given \ac{fa} probability the \ac{md} probability is minimized. 
+where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa} probability and $\log$ denotes the base-2 logarithm. This test ensures that for the given \ac{fa} probability the \ac{md} probability is minimized. 
 
 \subsection{Example of \ac{np} Test}
 \label{sec:los}
@@ -253,37 +260,37 @@ By varying $\lambda$ we obtain different values of $P_{\rm FA}$ and $P_{\rm MD}$
 
 Various options are considered in the literature for \ac{nn} training. We consider as objective function, the empirical \ac{ce} between the \ac{nn} output and the labels $t_i$ defined as
 \begin{equation}\label{eq:ce}
-\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
+\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{y}_i +\left(1-t_i\right)\log\left(1-\tilde{y}_i\right)\right],
 \end{equation}
-where $\tilde{y}_i = g(\bm a^{(i)})$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm y}}{g}$.
+where $\tilde{y}_i = g(\bm a^{(i)})$, $i=1, \ldots, S$, is the soft output corresponding the $i^{\rm th}$  training point. Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm a}}{g}$.
 
 In the following we show that a \ac{ce} based \ac{nn} is equivalent, in probability and for perfect training, with the \ac{np} solution. First, we prove that the output of the \ac{nn} can be interpreted as the class conditional probability. 
 \begin{theorem}
 Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i.e., with infinite number of training points, layers and neurons. Then
 \begin{equation}
-	\gy = p(\mathcal{H}_0|\bm y)	
+	\gy = p(\mathcal{H}_0|\bm a)	
 \end{equation}
 almost surely.
 \end{theorem}
 \begin{proof}
-Let $\bm y \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
+Let $\bm a \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
 \begin{equation}
-	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =  - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm y \in \mathcal{Y}_0} \log(\gy) 
-		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm y \in \mathcal{Y}_1} \log(1-\gy) \right],	
+	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} =  - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm a \in \mathcal{Y}_0} \log(\gy) 
+		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm a \in \mathcal{Y}_1} \log(1-\gy) \right],	
 \end{equation}
-where $\mathcal{Y}_k = \{\bm y_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
+where $\mathcal{Y}_k = \{\bm a_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
 Let $S \to \infty$. By the strong law of large numbers \cite{etemadi1981elementary}
 \begin{equation}
 \label{eq:as}
-	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_0) \log (\gy) d\bm y +  
-		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm y|\mathcal{H}_1) \log (1-\gy) d\bm y \right].
+	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm a|\mathcal{H}_0) \log (\gy) d\bm a +  
+		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm a|\mathcal{H}_1) \log (1-\gy) d\bm a \right].
 \end{equation}
 Starting from \eqref{eq:as} included, all subsequent equalities are intended to hold in probability, i.e., \textit{almost surely}, as defined in the strong law of large number formulation.
 Rearranging terms with the Bayes rule we get
 \begin{equation}
 \label{eq:dim1}
-\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} = - \left\{ \int_{\mathcal{Y}} \bigl[ p(\mathcal{H}_0|\bm y) \log(\gy) + 
-	(1-p(\mathcal{H}_0|\bm y)) \log(1-\gy)\bigr] p(\bm y)   d\bm y \right\}. 		
+\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} = - \left\{ \int_{\mathcal{Y}} \bigl[ p(\mathcal{H}_0|\bm a) \log(\gy) + 
+	(1-p(\mathcal{H}_0|\bm a)) \log(1-\gy)\bigr] p(\bm a)   d\bm a \right\}. 		
 \end{equation}
 We introduce the Bernoulli random variable $\xi$ with alphabet $ \{0,1\}$ and \ac{pdf} $\bm q = [q_0 \ q_1]$, where
 \begin{subequations}
@@ -295,29 +302,29 @@ We introduce the Bernoulli random variable $\xi$ with alphabet $ \{0,1\}$ and \a
 \end{subequations}
 Note that $\bm q$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis. Let also 
 \begin{equation}
-	\bm p_{\mathcal{H}|\bm y} \triangleq [p(\mathcal{H}_0|\bm y)\ p(\mathcal{H}_1|\bm y)].	
+	\bm p_{\mathcal{H}|\bm a} \triangleq [p(\mathcal{H}_0|\bm a)\ p(\mathcal{H}_1|\bm a)].	
 \end{equation}
 By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
 \begin{equation}
 \label{eq:final}
-	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm y}}{g} =	\E{\bm y}{ \cross{\bm p_{\mathcal{H}|\bm y}}{\bm q}} = 
-		\E{\bm y}{H (\bm p_{\mathcal{H}|\bm y}) + D(\bm p_{\mathcal{H}|\bm y}||\bm q)},
+	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} =	\E{\bm a}{ \cross{\bm p_{\mathcal{H}|\bm a}}{\bm q}} = 
+		\E{\bm a}{H (\bm p_{\mathcal{H}|\bm a}) + D(\bm p_{\mathcal{H}|\bm a}||\bm q)},
 \end{equation}
 where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pdf} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
 
-Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm y}||\bm q)$. The minimum is then attained for $D(\bm p_{\mathcal{H}|\bm y}||\bm q)=0$, that is when $\bm q = \bm p_{\mathcal{H}|\bm y}$.
+Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm a}||\bm q)$. The minimum is then attained for $D(\bm p_{\mathcal{H}|\bm a}||\bm q)=0$, that is when $\bm q = \bm p_{\mathcal{H}|\bm a}$.
 \end{proof}
 
 Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while, instead, it requires a large enough set of training points $S$ to converge.
 However, at convergence, the \ac{nn} achieves the same performance of the NP approach. This holds since \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, i.e., they provide the same \ac{roc}, with
 \begin{align}
-	\tilde{y} &= p(\mathcal{H}_0|\bm y), \\
+	\tilde{y} &= p(\mathcal{H}_0|\bm a), \\
 	\label{eq:relation}
 	\theta &= \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)},	
 \end{align}  
 where \eqref{eq:relation} is a direct consequence of the Bayes rule applied as follows 
 \begin{equation}
-	p(\mathcal{H}_0| \bm y) = \frac{1}{1+  \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)} \mathcal{L}^{(\bm y)}}.	
+	p(\mathcal{H}_0| \bm a) = \frac{1}{1+  \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)} \mathcal{L}^{(\bm a)}}.	
 \end{equation}
 
 
