@@ -485,8 +485,14 @@ Notice that, as the optimization problem is non-convex, solving \ac{pso} is simi
 
 \section{Numerical Results}\label{sec: nr}
 
-The considered scenario is depicted in Fig. \ref{fig:scen5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is is identified by the lower left building. Roads are considered to be \ac{los} paths. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
+The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is is identified by the lower left building. Roads are considered to be \ac{los} paths. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
 
+ \begin{figure}[h]
+     \centering
+     \includegraphics[width=0.9\columnwidth]{5bs.eps}
+     \caption{\ac{roc} of the \ac{np} test and the the proposed \ac{ml} test,  with different number of neurons in the hidden layer of the \ac{nn}.}
+     \label{fig:NP_comp}
+ \end{figure}
 
 \subsection{In-region location verification}
 We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ hidden layers and different number $N_h$ of neurons in the hidden layer. Training and testing have been performed with $10^6$ points each. 
