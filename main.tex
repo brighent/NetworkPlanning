@@ -165,9 +165,9 @@ be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(
 
 By using these attenuation training vectors and labels, we aim at building a function
 \begin{equation}
-    \hat{t} = g(\bm{y}) \in \{0,1\}\,
+    \hat{t} = g(\bm{a}) \in \{0,1\}\,
 \end{equation}
-that maps any attenuation vector $\bm{y}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm{y}$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
+that maps any attenuation vector $\bm{a}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm a$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
 
 The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
 \begin{equation}
@@ -183,33 +183,33 @@ where $\pr{\cdot}$ is the probability function.
 
 The \ac{irlv} problem can be seen as an hypothesis testing problem between the two hypothesis $\mathcal H_0$ and $\mathcal H_1$. When the statistics of the attenuation vectors are known under the two hypotheses, the most powerful test for the \ac{irlv} problem is provided by the \ac{np} lemma. In particular, let us  define the \ac{llr}
 \begin{equation}\label{eq:lr}
-    \mathcal{L}{(\bm{y})}=\log\left(\frac{p(\bm{y}|\mathcal{H}_0)}{p(\bm{y}|\mathcal{H}_1)}\right)\,,
+    \mathcal{L}{(\bm a)}=\log\left(\frac{p_{\bm A}(\bm a|\mathcal{H}_0)}{p_{\bm A}(\bm a|\mathcal{H}_1)}\right)\,,
 \end{equation}
-where $p(\bm{y}|\mathcal{H}_i)$ if the \ac{pdf} $\bm{y}$ given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
+where $p_{\bm A|\mathcal{H}}(\bm a|\mathcal{H}_i)$ if the \ac{pdf} of the random vector $\bm A$ modelling all attenuation values $\bm a$, given that hypothesis $\mathcal H_i$ is verified. Then the \ac{np} test function is 
 \begin{equation}
 \label{eq:thrOpt}
-    \hat{t} = g(\bm{y}) = \begin{cases}
-    0 & \mathcal{L}{(\bm{y})} \geq \theta\,, \\ 
-    1 & \mathcal{L}{(\bm{y})} < \theta\,, 
+    \hat{t} = g(\bm a) = \begin{cases}
+    0 & \mathcal{L}{(\bm a)} \geq \theta\,, \\ 
+    1 & \mathcal{L}{(\bm a)} < \theta\,, 
     \end{cases}
 \end{equation}
 where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa} probability and $\log$ denotes the base-2 logarithm. This test ensures that for the given \ac{fa} probability the \ac{md} probability is minimized. 
 
 \subsection{Example of \ac{np} Test}
 \label{sec:los}
-We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm{y})$. 
+We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm a)$. 
 
 Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
 
-In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $y$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
+In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
-    R = \frac{c y}{f_0 4 \pi}.
+    R = \frac{c a}{f_0 4 \pi}.
 \end{equation}
-Therefore, instead of considering $p(y|\mathcal H_i)$ we consider $p(R|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the \ac{bs} and corresponding to attenuation $y$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le R_0$ from the \ac{bs}. This is
+Therefore, instead of considering $p_{A|\mathcal{H}}(a|\mathcal H_i)$ we consider $p_{R|\mathcal{H}}(R_0|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the \ac{bs} and corresponding to attenuation $a$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le R_0$ from the \ac{bs}. This is
 \begin{equation}\label{eq:cdf}
      \mathbb{P}(R \le R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
 \end{equation}
-where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting area $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
+where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting region $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
 \begin{equation}\label{eq:num}
     p_{R|\mathcal{H}}(R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
 \end{equation}
@@ -219,7 +219,7 @@ Following the same reasoning and considering that the length of the circular sec
 \end{equation}
 From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
-    \mathcal{L}{(y)}=\log\left(\frac{|\mathcal{A}_1|\alpha \left(\frac{c y}{f_0 4 \pi}\right)}{|\mathcal{A}_0|\left(2\pi-\alpha\left(\frac{c y}{f_0 4 \pi}\right)\right)}\right).
+    \mathcal{L}{(a)}=\log\left(\frac{|\mathcal{A}_1|\alpha \left(\frac{c a}{f_0 4 \pi}\right)}{|\mathcal{A}_0|\left(2\pi-\alpha\left(\frac{c a}{f_0 4 \pi}\right)\right)}\right).
 \end{equation}
 %This result will be used in the numerical section part to compare the classifier performance of the \ac{nn} with the \ac{np} test.
 
@@ -248,7 +248,7 @@ The last layer comprises only one neuron, $y^{(L)}$, and the final output of the
 \begin{equation}
 	\tilde{t}(\bm a) \triangleq \sigma(y^{(L)}),	
 \end{equation}
-where $L$ is the total number of layers. Finally, the test function is obtained by thresholding $\tilde{y}$, i.e.,
+where $L$ is the total number of layers. Finally, the test function is obtained by thresholding $\tilde{t}$, i.e.,
 \begin{equation}
 \label{eq:decNN}
     g(\bm{a}) = \begin{cases}
@@ -260,7 +260,10 @@ By varying $\lambda$ we obtain different values of $P_{\rm FA}$ and $P_{\rm MD}$
 
 Various options are considered in the literature for \ac{nn} training. We consider as objective function, the empirical \ac{ce} between the \ac{nn} output and the labels $t_i$ defined as
 \begin{equation}\label{eq:ce}
-\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{t}(\bm a^{(i)}) +\left(1-\tilde{t}(\bm a^{(i)})\right)\log\left(1-\tilde{y}_i\right)\right].
+\begin{split}
+\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq& -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{t}(\bm a^{(i)}) + \right.\\
+&\left. +\left(1-t_i\right)\log\left(1-\tilde{t}(\bm a^{(i)})\right)\right].
+\end{split}
 \end{equation}
 Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm a}}{g}$.
 
