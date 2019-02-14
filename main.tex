@@ -152,17 +152,15 @@ Let us define the hypothesis of the \ac{irlv} problem as
  \begin{equation}
 \begin{split}
   \mathcal H_0: \mbox{the \ac{ue} is in $\mathcal{A}_0$} \\
-  \mathcal H_1: \mbox{the \ac{ue} is in $\mathcal{A}_1$}. 
+  \mathcal H_1: \mbox{the \ac{ue} is in $\mathcal{A}_1$}, 
   \end{split}
 \end{equation}
-
 In the training phase the \ac{ue} transmits from $S$ locations. For transmission $i=1,...,S$, let
 \begin{equation}
     \bm{a}^{(i)}=[a^{(i)}(1),...,a^{(i)}(N_{\rm AP})]
 \end{equation}
 be the vector of the measured attenuations at the  \acp{bs}. We label $\bm a ^{(i)}$ with $t_i=0$ if \ac{ue} is transmitting from inside $\mathcal{A}_0$ (hypothesis $\mathcal{H}_0$) and $t_i=1$ otherwise. Let also $\mathcal{T} =
  \{\bm{a}^{(1)}, \dots , \bm{a}^{(S)} \}$.
-
 By using these attenuation training vectors and labels, we aim at building a function
 \begin{equation}
     \hat{t} = g(\bm{a}) \in \{0,1\}\,
@@ -199,7 +197,7 @@ where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa
 \label{sec:los}
 We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm a)$. 
 
-Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
+Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside region is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
 
 In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $r$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
@@ -207,7 +205,7 @@ In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref
 \end{equation}
 Therefore, instead of considering $p_{A|\mathcal{H}}(a|\mathcal H_i)$ we consider $p_{R|\mathcal{H}}(r|\mathcal H_i)$, where $R$ is the random variable of the \ac{ue}-\ac{bs} distance corresponding to attenuation $A$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le r$ from the \ac{bs}. This is
 \begin{equation}\label{eq:cdf}
-     \pr{R \le r|\mathcal{H}_0} = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{r} \rho \alpha(\rho) d\rho,
+     \pr{R \le r|\mathcal{H}_0} = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{r} \rho \alpha(\rho) d\rho,     
 \end{equation}
 where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting region $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $r$ we obtain the \ac{pdf} 
 \begin{equation}\label{eq:num}
@@ -261,58 +259,83 @@ By varying $\lambda$ we obtain different values of $P_{\rm FA}$ and $P_{\rm MD}$
 Various options are considered in the literature for \ac{nn} training. We consider as objective function, the empirical \ac{ce} between the \ac{nn} output and the labels $t_i$ defined as
 \begin{equation}\label{eq:ce}
 \begin{split}
-\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} \triangleq& -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{t}(\bm a^{(i)}) + \right.\\
+\hatcross{p_{\mathcal{H}|\bm A}}{g} \triangleq& -\frac{1}{S} \sum_{i=1}^{S}\left[t_i\log \tilde{t}(\bm a^{(i)}) + \right.\\
 &\left. +\left(1-t_i\right)\log\left(1-\tilde{t}(\bm a^{(i)})\right)\right].
 \end{split}
 \end{equation}
-Training is performed with gradient descent minimizing $\hatcross{\bm p_{\mathcal{H}|\bm a}}{g}$.
+Training is performed with gradient descent minimizing $\hatcross{p_{\mathcal{H}|\bm a}}{g}$.
 
 In the following we show that a \ac{ce} based \ac{nn} is equivalent, in probability and for perfect training, with the \ac{np} solution. First, we prove that the output of the \ac{nn} can be interpreted as the class conditional probability. 
 \begin{theorem}
-Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i.e., with infinite number of training points, layers and neurons. Then
+Let $\gy \in [0,1]$ be the output of a \ac{nn} obtained with perfect training, i.e., with infinite number of training points, layers and neurons. Let the training be performed with the \ac{ce} metric. Then
 \begin{equation}
-	\gy = p(\mathcal{H}_0|\bm a)	
+	\gy = p_{\mathcal H|\bm A}(\mathcal{H}_0|\bm a)	
 \end{equation}
 almost surely.
 \end{theorem}
 \begin{proof}
-Let $\bm a \in \mathcal{Y}$ be the input feature vector, where $|\mathcal{Y}|=S$. Consider then 
+Consider
 \begin{equation}
-	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} =  - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm a \in \mathcal{Y}_0} \log(\gy) 
-		+ \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm a \in \mathcal{Y}_1} \log(1-\gy) \right],	
+\begin{split}
+	\hatcross{ p_{\mathcal{H}|\bm A}}{g} =&  - \left[ \frac{n_0}{S} \frac{1}{n_0} \sum_{\bm a \in \mathcal{T}_0} \log(\gy) \right. \\
+		&\left. + \frac{n_1}{S} \frac{1}{n_1} \sum_{\bm a \in \mathcal{T}_1} \log(1-\gy) \right],	
+\end{split}
 \end{equation}
-where $\mathcal{Y}_k = \{\bm a_i \in \mathcal{Y} : t_i = k\}$, $|\mathcal{Y}_k|=n_k$, $k \in \{0,1\}$.
+where $\mathcal{T}_k = \{\bm a_i \in \mathcal{T} : t_i = k\}$, $|\mathcal{T}_k|=n_k$, $k \in \{0,1\}$.
 Let $S \to \infty$. By the strong law of large numbers \cite{etemadi1981elementary}
 \begin{equation}
 \label{eq:as}
-	\lim_{S \to \infty}	\hatcross{p_t}{\gy} = - \left[ p(\mathcal{H}_0) \int_{\mathcal{Y}} p(\bm a|\mathcal{H}_0) \log (\gy) d\bm a +  
-		 p(\mathcal{H}_1) \int_{\mathcal{Y}} p(\bm a|\mathcal{H}_1) \log (1-\gy) d\bm a \right].
+\begin{split}
+	\lim_{S \to \infty}&	\hatcross{ p_{\mathcal{H}|\bm A}}{g} \simeq - \left[ p_{\mathcal H}(\mathcal{H}_0) \int_{\mathcal{Y}} p_{\bm A|\mathcal{H}}(\bm a|\mathcal{H}_0) \log (\gy) d\bm a \right. \\
+	& \left. + p_{\mathcal{H}}(\mathcal{H}_1) \int_{\mathcal{Y}} p_{\bm A|\mathcal{H}}(\bm a|\mathcal{H}_1) \log (1-\gy) d\bm a \right],
+\end{split}
 \end{equation}
-Starting from \eqref{eq:as} included, all subsequent equalities are intended to hold in probability, i.e., \textit{almost surely}, as defined in the strong law of large number formulation.
+where equality $\simeq$ holds in probability, i.e., \textit{almost surely}, as per the strong law of large number.
 Rearranging terms with the Bayes rule we get
 \begin{equation}
 \label{eq:dim1}
-\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} = - \left\{ \int_{\mathcal{Y}} \bigl[ p(\mathcal{H}_0|\bm a) \log(\gy) + 
-	(1-p(\mathcal{H}_0|\bm a)) \log(1-\gy)\bigr] p(\bm a)   d\bm a \right\}. 		
+\begin{split}
+\lim_{S \to \infty}	\hatcross{p_{\mathcal{H}|\bm A}}{g} \simeq - \left\{ \int_{\mathcal{Y}} \bigl[ p_{\mathcal{H}|\bm A}(\mathcal{H}_0|\bm a) \log \gy + \right. \bigr.\\ 
+	\bigl. \bigl.(1-p_{\mathcal{H}|\bm A}(\mathcal{H}_0|\bm a)) \log(1-\gy)\bigr] p(\bm a)   d\bm a \biggr\}. 		
+\end{split}
 \end{equation}
-We introduce the Bernoulli random variable $\xi$ with alphabet $ \{0,1\}$ and \ac{pdf} $\bm q = [q_0 \ q_1]$, where
-\begin{subequations}
-\label{eq:q}
-\begin{align}
-	q_0 &\triangleq \pr{\xi=0}=\gy \\
-	q_1 &\triangleq \pr{\xi=1}=1-\gy.
-\end{align}
-\end{subequations}
-Note that $\bm q$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis. Let also 
+By definition of expected value we can rewrite \eqref{eq:dim1} as
 \begin{equation}
-	\bm p_{\mathcal{H}|\bm a} \triangleq [p(\mathcal{H}_0|\bm a)\ p(\mathcal{H}_1|\bm a)].	
+		\label{eq:dim2}
+		\begin{split}
+	\lim_{S \to \infty}	\hatcross{p_{\mathcal{H}|\bm A}}{g} \simeq - \mathbb{E}_{\bm a} \left[ p_{\mathcal{H}|\bm A}(\mathcal{H}_0|\bm a) \log \gy + \right.\\ 
+			\left. (1-p_{\mathcal{H}|\bm A}(\mathcal{H}_0|\bm a)) \log(1-\gy)\right].  		
+		\end{split}
 \end{equation}
-By definition of cross entropy and expected value, we have from \eqref{eq:dim1}
+We introduce the Bernoulli random variable $\xi$ with alphabet $ \{0,1\}$ and \ac{pdf} 
+\begin{equation}
+\label{eq:q}
+p_\xi(0) = \gy, \quad
+p_\xi(1) = 1- \gy
+\end{equation}
+Note that $p_\xi$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis.
+Recall now that the cross entropy between two discrete \acp{pmd} $p_{W_1}(w)$ and $p_{W_2}(w)$ having the same alphabet $\mathcal{W}$ is defined as
+\begin{equation}
+\label{eq:defCross}
+	\cross{p_{W_1}}{W_2} = - \sum_{w \in \mathcal{W}} p_{W_1}(w) \log p_{W_2}(w).
+\end{equation}
+An equivalent definition is
+\begin{equation}
+\label{eq:alternativeDef}
+		\cross{p_{W_1}}{W_2} = H (p_{W_1}) + D(p_{W_1}||p_{W_2}),
+\end{equation}
+where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence and $H(\cdot)$ is the entropy function.
+Then, form \eqref{eq:dim2} and \eqref{eq:defCross}, we have 
+\begin{equation}
+		\lim_{S \to \infty}	\hatcross{p_{\mathcal{H}|\bm A}}{g} \simeq \mathbb{E}_{\bm a} \left[ \cross{p_{\mathcal{H}|\bm A}}{\xi} \right],
+\end{equation}
+which from \eqref{eq:alternativeDef} yields
 \begin{equation}
 \label{eq:final}
-	\lim_{S \to \infty}	\hatcross{\bm p_{\mathcal{H}|\bm a}}{g} =	\E{\bm a}{ \cross{\bm p_{\mathcal{H}|\bm a}}{\bm q}} = 
-		\E{\bm a}{H (\bm p_{\mathcal{H}|\bm a}) + D(\bm p_{\mathcal{H}|\bm a}||\bm q)},
+		\lim_{S \to \infty}	\hatcross{p_{\mathcal{H}|\bm A}}{g} \simeq 
+		\E{\bm a}{H ( p_{\mathcal{H}|\bm a}) + D( p_{\mathcal{H}|\bm a}|| p_\xi)}
 \end{equation}
+
 where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pdf} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
 
 Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm a}||\bm q)$. The minimum is then attained for $D(\bm p_{\mathcal{H}|\bm a}||\bm q)=0$, that is when $\bm q = \bm p_{\mathcal{H}|\bm a}$.
