@@ -333,24 +333,22 @@ which from \eqref{eq:alternativeDef} yields
 \begin{equation}
 \label{eq:final}
 		\lim_{S \to \infty}	\hatcross{p_{\mathcal{H}|\bm A}}{g} \simeq 
-		\E{\bm a}{H ( p_{\mathcal{H}|\bm a}) + D( p_{\mathcal{H}|\bm a}|| p_\xi)}
+		\E{\bm a}{H ( p_{\mathcal{H}|\bm A}) + D( p_{\mathcal{H}|\bm A}|| p_\xi)}
 \end{equation}
 
-where $D(\cdot||\cdot)$ is the Kullback-Leibler divergence, $H_{\bm c}(\bm d)$ is the cross entropy function between the two discrete \acp{pdf} $\bm c$ and $\bm d$, and $H(\cdot)$ is the entropy function. The second equality holds by definition of cross entropy.
-
-Recall that \ac{nn} training is performed by minimizing \eqref{eq:final} with respect to \ac{nn} parameters. In the third term of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D(\bm p_{\mathcal{H}|\bm a}||\bm q)$. The minimum is then attained for $D(\bm p_{\mathcal{H}|\bm a}||\bm q)=0$, that is when $\bm q = \bm p_{\mathcal{H}|\bm a}$.
+Recall that \ac{nn} training is performed by minimizing the left hand side of \eqref{eq:final} with respect to \ac{nn} parameters. In the right hand side of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D( p_{\mathcal{H}|\bm A}||p_\xi)$. The minimum is then attained for $D(p_{\mathcal{H}|\bm A}||p_\xi)=0$, that is when $p_\xi = p_{\mathcal{H}|\bm A}$.
 \end{proof}
 
-Note that this approach does not require the knowledge of the statistics of $\bm{y}$ under the two hypotheses, while, instead, it requires a large enough set of training points $S$ to converge.
+Note that this approach does not require the knowledge of the statistics of $\bm{a}$ under the two hypotheses, while, instead, it requires a large enough set of training points $S$ to converge.
 However, at convergence, the \ac{nn} achieves the same performance of the NP approach. This holds since \eqref{eq:decNN} is equivalent to \eqref{eq:thrOpt}, i.e., they provide the same \ac{roc}, with
 \begin{align}
-	\tilde{y} &= p(\mathcal{H}_0|\bm a), \\
+	\tilde{t} &= p_{\mathcal{H}|\bm A}(\mathcal{H}_0|\bm a), \\
 	\label{eq:relation}
-	\theta &= \frac{1-\lambda}{\lambda} \frac{p(\mathcal{H}_0)}{p(\mathcal{H}_1)},	
+	\theta &= \frac{1-\lambda}{\lambda} \frac{p_\mathcal{H}(\mathcal{H}_0)}{p_{\mathcal{H}}(\mathcal{H}_1)},	
 \end{align}  
 where \eqref{eq:relation} is a direct consequence of the Bayes rule applied as follows 
 \begin{equation}
-	p(\mathcal{H}_0| \bm a) = \frac{1}{1+  \frac{p(\mathcal{H}_1)}{p(\mathcal{H}_0)} \mathcal{L}^{(\bm a)}}.	
+	p_{\mathcal{H}|\bm A}(\mathcal{H}_0| \bm a) = \frac{1}{1+  \frac{p_{\mathcal{H}}(\mathcal{H}_1)}{p_{\mathcal{H}}(\mathcal{H}_0)} \mathcal{L}(\bm a)}.	
 \end{equation}
 
 
