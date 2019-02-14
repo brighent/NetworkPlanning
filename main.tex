@@ -488,37 +488,47 @@ Notice that, as the optimization problem is non-convex, solving \ac{pso} is simi
 
 \section{Numerical Results}\label{sec: nr}
 
-The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is identified by the lower-left building. Roads are considered as \ac{los} paths, whereas transmissions from \acp{ue} located in any other map position is non-\ac{los}. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
+The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is located inside the lower-left building, delimited by the dash-dotted line. Roads are considered as \ac{los} paths, whereas transmissions from \acp{ue} located in any other map position is non-\ac{los}. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
 
-%  \begin{figure}[h]
-%      \centering
-%      \includegraphics[width=0.9\columnwidth]{5bs.eps}
-%      \caption{\ac{irlv} deployment scenario. $N_{\rm AP}=5$ \acp{bs} are located in the streets separating 4 buildings. The \ac{roi} is represented by the lower-left building.}
-%      \label{fig:5bs}
-%  \end{figure}
+ \begin{figure}[h]
+     \centering
+     \includegraphics[width=0.7\columnwidth]{5bs.eps}
+     \caption{\ac{irlv} deployment scenario. $N_{\rm AP}=5$ \acp{bs} are located in the streets separating 4 buildings. The \ac{roi} is located inside the lower-left building, delimited by the dash-dotted line.}
+     \label{fig:5bs}
+ \end{figure}
+ 
+Results are averaged over different shadowing realizations. In particular, for each \ac{fa} probability value we compute the average \ac{md} probability over different shadowing maps.
+Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the area $\mathcal{A}$. 
+We see the two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$ having lower attenuation values. The \ac{roi} $\mathcal A_0$ is delimited by the red line.
 
-Fig. \ref{fig:n_neur} shows the average (over shadowing realizations) \ac{roc} of the proposed \ac{nn} \ac{irlv} system  trained with different number of neurons in the hidden layer $N_h$. Results have been obtained for a \ac{nn} with $N_L=3$ layers and with a training set of size $\mathcal{S}= 10^5$. We notice that, as the number of neurons at the hidden layer increases, the average \ac{fa} probability decreases. When the number of neurons $N_h$ is higher than $8$ however we notice that results converge, meaning that increasing the network size does not lead to a performance betterment. 
-
-Fig. \ref{fig:n_train} shows the average (over shadowing realizations) \ac{roc} of the proposed \ac{nn} \ac{irlv} system  trained with different number of training points $\mathcal{S}$. Results have been obtained for a $N_L=3$ layer \ac{nn} with $N_h=5$ neurons in the hidden layer. We see that the \ac{auc} decreases when increasing the number of training points and that, starting from $q=10^6$, the \ac{roc} does not improve. This is due to the the fact that, for the selected \ac{nn} architecture, training has reached convergence and hence adding further data to the training process does not add information to the function implemented by the \ac{nn}. 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\columnwidth]{res_avg_nNeur_1e5.eps}
+    \includegraphics[width=0.9\columnwidth]{surfColorato.png}
+    \caption{Example of a realization of the attenuation map in the non-\ac{los} scenario considering only the shadowing effects.}
+    \label{fig:trueMap}
+\end{figure}
+\subsection{In-region location verification}
+Fig. \ref{fig:n_neur} shows the average (over shadowing realizations) $P_{\rm MD}$ vs. $P_{\rm FA}$ of the proposed \ac{nn} \ac{irlv} system  trained with different number of neurons in the hidden layer $N_h$. Results have been obtained for a \ac{nn} with $N_L=3$ layers and with a training set of size $\mathcal{S}= 10^5$. We notice that, as the number of neurons at the hidden layer increases, the average \ac{fa} probability decreases. When the number of neurons $N_h$ is higher than $8$ however we notice that results converge, meaning that increasing the network size does not lead to a performance betterment. Therefore we henceforth consider \acp{nn} with $N_h=8$.
+
+Fig. \ref{fig:n_train} shows the average (over shadowing realizations) $P_{\rm MD}$ vs. $P_{\rm FA}$ of the proposed \ac{nn} \ac{irlv} system  trained with different number of training points $\mathcal{S}$. Results have been obtained for a $L=3$ layer \ac{nn} with $N_h=8$ neurons in the hidden layer. We see that the \ac{auc} decreases when increasing the number of training points and that, starting from $\mathcal{S}=10^5$, the \ac{roc} does not significantly improve. This is due to the the fact that, for the selected \ac{nn} architecture, training has reached convergence and hence adding further data to the training process does not add information to the function implemented by the \ac{nn}. 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1\columnwidth]{res_avg_nNeur_1e5.eps}
     \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $q$ training points.}
     \label{fig:n_neur}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.9\columnwidth]{res_avg_nTrain.eps}
+    \includegraphics[width=1\columnwidth]{res_avg_nTrain.eps}
     \caption{\ac{roc} of the \ac{nn} \ac{irlv} system trained with $\mathcal{S}$ training points.}
     \label{fig:n_train}
 \end{figure}
 
-\subsection{In-region location verification}
-We first compare the \ac{nn} solution with the optimal \ac{np} test in the \ac{los} scenario, using a single \ac{bs} as described in Section \ref{sec:los}. We consider a \ac{nn} with $N_L=3$ layers and different number $N_h$ of neurons in the hidden layer. Training and testing have been performed with $10^6$ points each. 
 
-Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
+Fig. \ref{fig:NP_comp} shows part of the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. Results are obtained for the simplified scenario depicted in Fig. \ref{fig:scen} and for the model described in Sec. \ref{sec:los}. We consider an overall circular area $\mathcal{A}$ with radius $R_{\rm out} = 40$~m, a square authentic area $\mathcal{A}_0$ of $L = H= 25$~m located inside $\mathcal{A}$, with upper left corner at a distance of $R_{\rm min} = 4$~m from the center of $\mathcal{A}$. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
 
  
  \begin{figure}[h]
@@ -529,25 +539,12 @@ Fig. \ref{fig:NP_comp} shows the \ac{roc} obtained with the \ac{np} test and wit
  \end{figure}
 
 
-
-%Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the area $\mathcal{A}$. 
-%We further assume that inside $\mathcal{A}$ there are  two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$, representing for example streets surrounded by buildings. We indicate region $\mathcal A_0$   by the red line.
-
-
-% \begin{figure}[t]
-%     \centering
-%     \includegraphics[width=0.9\columnwidth]{surfColorato.png}
-%     \caption{Example of a realization of the attenuation map in the non-\ac{los} scenario considering only the shadowing effects.}
-%     \label{fig:trueMap}
-% \end{figure}
-
-
 \subsection{Network Planning Performance}
 
-We consider now the network planning using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. There exists a variety of implementations of the \ac{pso}, but the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations. We consider $10^4$ training  points and  $10^3$ testing points. In order to validate the use of the \ac{ce} as a proxy for the \ac{auc}, we compare the performance of Algorithm 1 using $\mathcal{B}=$\ac{ce} and using $\mathcal{B}=$\ac{auc}. The overall performance metric is the \ac{auc}.
+We here consider the network planning problem using the proposed Algorithm 1. We consider a \ac{pso} with $P=6$ particles, each composed by a set of $N_{\rm AP}=5$ \acp{bs} initialized with random positions. There exists a variety of implementations of the \ac{pso}, but the most general case for the parameters initialization is given by \cite{clerc2002}, i.e.,   $\omega=0.7298$, $c_1=c_2=1.4961$. Results are averaged over different shadowing realizations as before discussed. The used \acp{nn} are implemented with $L=3$ layers and $N_h=8$ neurons at the hidden layer. In order to validate the use of the \ac{ce} as a proxy for the \ac{auc}, we compare the performance of Algorithm 1 using $\mathcal{B}=$\ac{ce} and using $\mathcal{B}=$\ac{auc}. The overall performance metric is the \ac{auc}.
 
-Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. 
-Note that the result of Theorem 1 holds asymptotically and with perfect training (in terms of training set, number of layers and neurons), which are conditions that our experiments do not satisfy. This explains the following two observations. The former is that there is a  difference between the \ac{auc} convergence values for the two algorithms. However, this difference is small ($\sim 10^{-4}$). The latter is that the \ac{auc}-based algorithm converges earlier, at iteration 3, than the \ac{ce}-based algorithm, at iteration 5. As before stated, convergence of the \ac{nn} network is obtained only asymptotically. Therefore the obtained \ac{ce} is an approximation of the selected objective function, requiring more gradient descent steps than those required by the direct optimization of the \ac{auc}.   
+Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations for the two implementations of Algorithm 1 and for different training set size $\mathcal{S}$.
+We recall that the result of Theorem 1 holds asymptotically and with perfect training (in terms of training set, number of layers and neurons), which are conditions that our experiments do not satisfy. This explains the following two observations. The former is that the training set sizwe should be sufficiently large in order to consider the \ac{ce} as a proxy of the classification performance. In fact we notice that for $\mathcal{S}=10^3$ the obtained mean \ac{auc} values for \ac{pso} with \ac{ce} objective function get worse as the  number of iterations grow. This is due to the fact that convergence has not been reached because of the limited size of the training set, and hence the obtained \ac{ce} value is not representative of the \ac{irlv} system performance. This is solved by augmenting the training set size, as we see from results obtained with $\mathcal{S}=10^4$ and $\mathcal{S}=10^5$. The latter is that the \ac{auc}-based algorithm converges earlier than the \ac{ce}-based algorithm. As before stated, convergence of the \ac{nn} is obtained only asymptotically. Therefore the obtained \ac{ce} is an approximation of the selected objective function, whose optimization does not necessarily mean the optimization of the function it is trying to represent. Despite of requiring a larger number of iterations the \ac{ce}-based solution is convenient as it does not require the collection of the testing set to build the \ac{roc} curve and hence compute the \ac{auc}.   
 
 %Fig. \ref{fig:CEvsAUC} shows the average \ac{auc} value vs. the number of \ac{pso} iterations. We see that the \ac{ce}-based solution reaches approximately the same  \ac{auc} value of the \ac{auc}-based solution as the number of iterations increases. Recalling that \eqref{eq:final} is obtained as asymptotic result, the fact that the \ac{ce} based solution requires a larger number of iteration to reach the minimum is due to the fact that results obtained by simulations consider finite number of neurons and finite training set. However we notice that also in the finite case the \ac{ce} minimization provides a good approximation of the classification performance of the network.
 
@@ -556,7 +553,7 @@ Note that the result of Theorem 1 holds asymptotically and with perfect training
 %\balance
 \begin{figure} 
     \centering
-    \includegraphics[width=0.9\columnwidth]{res_PSO_comp.eps}
+    \includegraphics[width=1\columnwidth]{res_PSO_comp.eps}
     \caption{Mean \ac{auc} vs. the number of \ac{pso} iterations for Algorithm 1, and two \ac{pso} algorithms using only the  \ac{auc} and the \ac{ce} as objective functions. }
     \label{fig:CEvsAUC}
 \end{figure}
@@ -572,7 +569,7 @@ Note that the result of Theorem 1 holds asymptotically and with perfect training
 \label{sec:conc}
 %\balance
 
-In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and proposed a \ac{ml} solution. We proved that the \ac{nn} implementation achieves the same performance of the optimal \ac{np} test and verified numerically this claim for a simple scenario. We also assessed the effects of the training set size over the \ac{roc} for a more complicated scenario. We then proposed a \ac{pso}  algorithm for the  optimal \acp{bs} positioning, establishing the connection of two objective functions, \ac{ce} and \ac{auc}, in terms of  \ac{roc}.
+In this paper we formulated the \ac{irlv} problem as an hypothesis testing problem and proposed a \ac{ml} solution. We proved that the \ac{nn} implementation achieves the same performance of the optimal \ac{np} test and verified numerically this claim for a simple scenario. We also assessed the effects of the training set size over the \ac{roc} for a more complicated scenario. We then proposed a \ac{pso} algorithm for the  optimal \acp{bs} positioning, showing that there is a minimum training set size which allows to use the \ac{ce} as a proxy of the \ac{auc}.
 % We then showed by numerical results the effectiveness of the proposed solution in terms of \ac{auc} of the \ac{roc}.
 
 
