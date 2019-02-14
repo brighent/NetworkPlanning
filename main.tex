@@ -71,7 +71,7 @@
 \maketitle
 
 \begin{abstract}
-For a \ac{ue} transmitting over a wireless network we consider the \ac{irlv} problem of deciding if the \ac{ue} is inside or outside a specific physical area (e.g., a safe room). The decision process exploits the features of the channel between the \ac{ue} and a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with the channel features (in particular, noisy attenuation values) collected by the \acp{bs} for various positions both inside and outside the specific area and outputs a decision between the \ac{ue} being inside or outside the area. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and the true user position set. In order to solve the minimization problem we propose a two-stage \ac{pso} algorithm. We show that for a long training and a \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
+For a \ac{ue} transmitting over a wireless network we consider the \ac{irlv} problem of deciding if the \ac{ue} is inside or outside a specific physical region (e.g., a safe room). The decision process exploits the features of the channel between the \ac{ue} and a set of network \acp{bs}. A  \ac{ml} approach is used, based on a \ac{nn}. The \ac{nn} is trained with the channel features (in particular, noisy attenuation values) collected by the \acp{bs} for various positions both inside and outside the specific region and outputs a decision between the \ac{ue} being inside or outside the region. By seeing the \ac{irlv} problem as an hypothesis testing problem, we address the optimal positioning of the \acp{bs} for minimizing either the \ac{auc} of the \ac{roc} or  the \ac{ce} between the \ac{nn} output and the true user position set. In order to solve the minimization problem we propose a two-stage \ac{pso} algorithm. We show that for a long training and a \ac{nn} with enough neurons the proposed solution achieves the performance of the \ac{np} lemma.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -87,7 +87,7 @@ In order to establish the user position we can rely on the reports of localizati
 
 Location verification systems aim at verifying the position of devices in sensor networks \cite{Zeng-survey, 8376254}, Internet of Things \cite{7903611}, and mobile cell networks \cite{quaglia}. Various approaches have been proposed for location verification, typically based on the measurement of the distance between the transmitter and other users  or  anchor nodes belonging to the network infrastructure. The distance measures are obtained, for example, through the \ac{rss} at anchor nodes for signals transmitted by the terminal under verification.  This problem is closely related to the {\em user authentication} at the physical layer, where wireless channel features are exploited to verify the sender of a message \cite{7270404}.
 
-We focus here on  \ac{irlv}, i.e., the problem of deciding whether a message coming from a terminal over a wireless network has been originated from a specific physical area, e.g., a safe room, or not \cite{Zeng-survey}. \ac{irlv} can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific area. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays. 
+We focus here on  \ac{irlv}, i.e., the problem of deciding whether a message coming from a terminal over a wireless network has been originated from a specific physical region, e.g., a safe room, or not \cite{Zeng-survey}. \ac{irlv} can be seen as an hypothesis testing problem between two alternatives, namely being inside or outside the specific region. Among proposed solutions, we recall distance bounding techniques with rapid exchanges of packets between the verifier and the prover \cite{Brands}, also using radio-frequency and ultrasound signals \cite{Sastry}, and solutions based on the use of anchor nodes and increasing transmit power by the sender \cite{Vora}. More recently, a delay-based verification technique has been proposed  in \cite{7145434}, leveraging geometric properties of triangles, which prevents an adversary from manipulating measured delays. 
 
 In this paper, we consider the \ac{irlv} problem for a \ac{ue} connected to a set of network \acp{bs}. The decision on the user position is taken on the basis of observed features of the channel over which communication occurs. For exemplary purposes we focus here on the observation of the attenuation of the channel between the \ac{ue} and the \acp{bs}. We first observe that the  \ac{np} lemma \cite{Neyman289} is the optimal solution to \ac{irlv} by providing the hypothesis test with the minimum \ac{md} probability for a given \ac{fa} probability.
 Note that in the \ac{irlv} literature there is no detailed \ac{fa}-\ac{md} analysis nor a clear comparison with the optimal \ac{np} solution.
@@ -105,7 +105,7 @@ Then, leveraging \ac{irlv} solution we address the problem of optimum positionin
 
 We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from inside an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The dependency on location of the \ac{ue}-\ac{bs} channels is exploited to distinguish between transmissions from inside and outside $\mathcal{A}_0$. Transmissions are assumed to be narrowband and the channel feature used for \ac{irlv} is its attenuation.
 
-The \ac{irlv} procedure comprises two phases. In the first phase, named identification or training, a trusted \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted by trusted \ac{ue}. Similarly, attenuation values are collected when the trusted \ac{ue} transmits  from the complementary area $\mathcal{A}_1$ and  stored by the \acp{bs} in association to $\mathcal{A}_1 = \mathcal{A} \setminus \mathcal{A}_0$. In the second  phase, named verification or exploitation, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
+The \ac{irlv} procedure comprises two phases. In the first phase, named identification or training, a trusted \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted by trusted \ac{ue}. Similarly, attenuation values are collected when the trusted \ac{ue} transmits  from the complementary region $\mathcal{A}_1$ and  stored by the \acp{bs} in association to $\mathcal{A}_1 = \mathcal{A} \setminus \mathcal{A}_0$. In the second  phase, named verification or exploitation, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
 
 % The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
 
@@ -167,7 +167,7 @@ By using these attenuation training vectors and labels, we aim at building a fun
 \end{equation}
 that maps any attenuation vector $\bm{a}$ into a decision on the location of the \ac{ue}. We would like to have $\hat{t}=0$ if $\bm a$ was obtained when the \ac{ue} was inside $\mathcal{A}_0$ and $\hat{t}=1$ otherwise.
 
-The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this area, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the area. In formulas, 
+The performance of the \ac{irlv} system is assessed in terms of two error probabilities: the \ac{fa} probability, i.e., the probability  that a \ac{ue} in $\mathcal A_0$ is declared outside this region, and the \ac{md} probability, i.e., the probability that a \ac{ue} outside $\mathcal A_0$ is declared inside the region. In formulas, 
 \begin{equation}
 P_{\rm FA} =\pr{\hat{t} =1 | \mathcal H_0}
 \end{equation} 
@@ -197,7 +197,7 @@ where $\theta$ is a threshold to be chosen in order to ensure the desired \ac{fa
 \label{sec:los}
 We now describe an example of application of the \ac{np} test, where we can easily obtain a close-form expression for $f(\bm a)$. 
 
-Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside region is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
+Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network region as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside region is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
 
 In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $r$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
@@ -225,7 +225,7 @@ From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of t
 \begin{figure} 
     \centering
     \includegraphics[width=0.9\columnwidth]{simpleScen.eps}
-    \caption{Realization of the scenario over which \ac{np} hypothesis testing is performed: the \ac{ue} transmits message toward the \ac{bs} located at the center of the overall circular area. }
+    \caption{Realization of the scenario over which \ac{np} hypothesis testing is performed: the \ac{ue} transmits message toward the \ac{bs} located at the center of the overall circular region. }
     \label{fig:scen}
 \end{figure}
 
@@ -389,7 +389,7 @@ As the attenuation depends on the position of the \acp{bs} and on the surroundin
 
 The optimal solution for \acp{bs} positioning in the \ac{irlv} context is given by the minimization of $P_{\rm MD}$ for each $P_{\rm FA}$ value, provided vy \ac{np}. We consider as performance metric the \ac{roc} curve, defined as the  function associating the $P_{\rm MD}$ with the corresponding $P_{\rm FA}$, for all possible values of thresholds $\lambda$. However, we do not want to fix {\em a priori} the value of $P_{\rm FA}$, but we instead want a single measure capturing the whole behaviour of the curve. We hence resort to the \ac{roc} \ac{auc} \cite{hanley-82}, defined as 
 \begin{equation}
-    K  = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
+    C  = \int_{0}^{1} P_{\rm MD}\left(P_{\rm FA}\right) d P_{\rm FA},
 \end{equation}
 where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a function of $P_{\rm FA}$, which corresponds to the integral of the \ac{roc} function. Note that minimizing the \ac{auc}, is equivalent to minimize the average $P_{\rm MD}$ corresponding to a uniform $P_{\rm FA}$.
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
@@ -509,7 +509,7 @@ Notice that, as the optimization problem is non-convex, solving \ac{pso} is simi
 
 \section{Numerical Results}\label{sec: nr}
 
-The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall area is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is located inside the lower-left building, delimited by the dash-dotted line. Roads are considered as \ac{los} paths, whereas transmissions from \acp{ue} located in any other map position is non-\ac{los}. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
+The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall region is represented by a square with side length $525$ meters, where four buildings with side length $255$ meters are located at the map corners, such that they are separated by a road with width $15$ m. The \ac{roi} $\mathcal{A}_0$ is located inside the lower-left building, delimited by the dash-dotted line. Roads are considered as \ac{los} paths, whereas transmissions from \acp{ue} located in any other map position is non-\ac{los}. $N_{\rm AP}=5$ \acp{bs} are deployed, one for each street and one at the map center, to collect attenuation values. Each \ac{bs} sees the \ac{los} path of the street it is located in. For each \ac{bs} we generate a shadowing map with standard deviation $\sigma_s = 8$ dB and decorrelation distance $d_c = 75$ m. \acp{ue} transmit with average unitary power at the frequency $f_0 = 2.12$ GHz.
 
  \begin{figure}[h]
      \centering
@@ -519,7 +519,7 @@ The considered scenario is depicted in Fig. \ref{fig:5bs}. The overall area is r
  \end{figure}
  
 Results are averaged over different shadowing realizations. In particular, for each \ac{fa} probability value we compute the average \ac{md} probability over different shadowing maps.
-Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the area $\mathcal{A}$. 
+Fig. \ref{fig:trueMap} shows a realization of the path loss and shadowing map for an \ac{bs} located in the center of the region $\mathcal{A}$. 
 We see the two orthogonal \ac{los} paths traversing the center of $\mathcal{A}$ having lower attenuation values. The \ac{roi} $\mathcal A_0$ is delimited by the red line.
 
 
@@ -549,7 +549,7 @@ Fig. \ref{fig:n_train} shows the average (over shadowing realizations) $P_{\rm M
 \end{figure}
 
 
-Fig. \ref{fig:NP_comp} shows part of the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. Results are obtained for the simplified scenario depicted in Fig. \ref{fig:scen} and for the model described in Sec. \ref{sec:los}. We consider an overall circular area $\mathcal{A}$ with radius $R_{\rm out} = 40$~m, a square authentic area $\mathcal{A}_0$ of $L = H= 25$~m located inside $\mathcal{A}$, with upper left corner at a distance of $R_{\rm min} = 4$~m from the center of $\mathcal{A}$. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
+Fig. \ref{fig:NP_comp} shows part of the \ac{roc} obtained with the \ac{np} test and with the \ac{nn}. Results are obtained for the simplified scenario depicted in Fig. \ref{fig:scen} and for the model described in Sec. \ref{sec:los}. We consider an overall circular region $\mathcal{A}$ with radius $R_{\rm out} = 40$~m, a square authentic region $\mathcal{A}_0$ of $L = H= 25$~m located inside $\mathcal{A}$, with upper left corner at a distance of $R_{\rm min} = 4$~m from the center of $\mathcal{A}$. We see that, even with a small number of neurons, in this simple problem, the \ac{nn} achieves the same \ac{roc} of the \ac{np} test. This is a numerical demonstration of Theorem 1.
 
  
  \begin{figure}[h]
