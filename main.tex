@@ -201,21 +201,21 @@ We now describe an example of application of the \ac{np} test, where we can easi
 
 Fig. \ref{fig:scen} shows the scenario over which \ac{np} test is applied. Let us define the overall network area as a circle $\mathcal{A}_c$ with radius $R_{\rm out}$ and consider a single \ac{bs} located at the center of $\mathcal{A}_c$. Consider $\mathcal{A}_{0}$ as a rectangle with nearest point to the center of $\mathcal{A}_c$ at a distance $R_{\rm min}$. The outside area is $\mathcal{A}_1 = \mathcal{A}_c \setminus \mathcal{A}_0$.
 
-In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $R$ from the \ac{ue} to the \ac{bs} is hence given by 
+In the \ac{los} scenario the attenuation incurred by a \ac{ue} is given by (\ref{eq:los}), which only depends on its relative distance to the \ac{bs}. Considering an attenuation value $a$, the distance $r$ from the \ac{ue} to the \ac{bs} is hence given by 
 \begin{equation}
-    R = \frac{c a}{f_0 4 \pi}.
+    r = \frac{c a}{f_0 4 \pi}.
 \end{equation}
-Therefore, instead of considering $p_{A|\mathcal{H}}(a|\mathcal H_i)$ we consider $p_{R|\mathcal{H}}(R_0|\mathcal H_i)$, where $R$ is the distance of the \ac{ue} from the \ac{bs} and corresponding to attenuation $a$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le R_0$ from the \ac{bs}. This is
+Therefore, instead of considering $p_{A|\mathcal{H}}(a|\mathcal H_i)$ we consider $p_{R|\mathcal{H}}(r|\mathcal H_i)$, where $R$ is the random variable of the \ac{ue}-\ac{bs} distance corresponding to attenuation $A$. We first derive the \ac{cdf} of $R$ in $\mathcal{A}_0$, i.e.,  the probability that the \ac{ue} is located in $\mathcal{A}_0$ at a distance $R\le r$ from the \ac{bs}. This is
 \begin{equation}\label{eq:cdf}
-     \mathbb{P}(R \le R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{R_0} \rho \alpha(\rho) d\rho,
+     \pr{R \le r|\mathcal{H}_0} = \frac{1}{|\mathcal{A}_0|}\int_{R_{\rm min}}^{r} \rho \alpha(\rho) d\rho,
 \end{equation}
-where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting region $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $R_0$ we obtain the \ac{pdf} 
+where $\alpha(R)$ denotes the angle of the circular sector measured from a distance $R$ and intersecting region $\mathcal{A}_0$ and $|\mathcal{A}_0|$ is the area of region $\mathcal{A}_0$. Then by taking the derivative of the \ac{cdf} (\ref{eq:cdf}) with respect to $r$ we obtain the \ac{pdf} 
 \begin{equation}\label{eq:num}
-    p_{R|\mathcal{H}}(R_0|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}R_0\alpha(R_0).
+    p_{R|\mathcal{H}}(r|\mathcal{H}_0) = \frac{1}{|\mathcal{A}_0|}r\alpha(r).
 \end{equation}
-Following the same reasoning and considering that the length of the circular sector with radius $R_0$ located in $\mathcal{A}_1$ is $2\pi - \alpha(R_0)$, we obtain the \ac{pdf} of transmission from a distance $R_0$ in $\mathcal{A}_1$ as
+Following the same reasoning and considering that the length of the circular sector with radius $r$ located in $\mathcal{A}_1$ is $2\pi - \alpha(r)$, we obtain the \ac{pdf} of transmission from a distance $r$ in $\mathcal{A}_1$ as
 \begin{equation}\label{eq:den}
-     p_{R|\mathcal{H}}(R_0|\mathcal{H}_1) = \frac{1}{|\mathcal{A}_1|}R_0\left(2\pi-\alpha(R_0)\right).
+     p_{R|\mathcal{H}}(r|\mathcal{H}_1) = \frac{1}{|\mathcal{A}_1|}r\left(2\pi-\alpha(r)\right).
 \end{equation}
 From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of the \ac{ue}'s distance from the \ac{bs} as 
 \begin{equation}
