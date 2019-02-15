@@ -101,7 +101,7 @@ Then, we address the problem of optimum positioning of the \acp{bs} (network pla
 
 We consider a cellular system with $N_{\rm AP}$ \acp{bs} covering a region $\mathcal{A}$ over a plane. We propose a \ac{irlv} system able to determine if a \ac{ue} is transmitting from inside an {\em authorized} sub-region $\mathcal{A}_0 \subset \mathcal{A}$. The dependency on location of the \ac{ue}-\acp{bs} channels is exploited to distinguish between transmissions from inside and outside $\mathcal{A}_0$. Transmissions are assumed to be narrowband and the channel feature used for \ac{irlv} is its attenuation.
 
-The \ac{irlv} procedure comprises two phases. In the first phase, named identification or training, a trusted \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted by trusted \ac{ue}. Similarly, attenuation values are collected when the trusted \ac{ue} transmits  from the complementary region $\mathcal{A}_1$ and  stored by the \acp{bs} in association to $\mathcal{A}_1 = \mathcal{A} \setminus \mathcal{A}_0$. In the second  phase, named verification or exploitation, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
+The \ac{irlv} procedure comprises two phases. In the first phase, named identification or training, a trusted \ac{ue} transmits a training signal (known at the \acs{bs}) from various points inside region $\mathcal{A}_0$.  The \acp{bs} estimate the channel attenuations and store them in association with $\mathcal{A}_0$. Some external authentication technique on the transmitted packet  ensures that the received signal upon which the attenuation is estimated is actually transmitted by the trusted \ac{ue}. Similarly, attenuation values are collected when the trusted \ac{ue} transmits  from the complementary region $\mathcal{A}_1$ and  stored by the \acp{bs} in association to $\mathcal{A}_1 = \mathcal{A} \setminus \mathcal{A}_0$. In the second  phase, named verification or exploitation, the \ac{ue} transmits a known training sequence from any point in $\mathcal{A}$ and the \ac{irlv} system must decide whether the \ac{ue} is in region $\mathcal{A}_0$ or $\mathcal{A}_1$.
 
 % The location dependency of the features of the transmission channel can be further enhanced by properly placing the \acp{bs} over the area $\mathcal{A}$. In particular, different positioning lead to different shadowing incurred by the transmission of the \acp{ue} toward the \acp{bs}. Our aim is to find the optimal \acp{bs} positioning such that the authentication system can optimally discriminate between different areas based on the estimated attenuation values.
 
@@ -163,7 +163,7 @@ The \ac{irlv} problem can be seen as an hypothesis testing problem between the t
 \begin{equation}\label{eq:lr}
     \mathcal{L}{(\bm a)}=\log\left(\frac{p_{\bm a}(\bm a|\mathcal{H}_0)}{p_{\bm a}(\bm a|\mathcal{H}_1)}\right)\,,
 \end{equation}
-where $p_{\bm a|\mathcal{H}}(\bm a|\mathcal{H}_i)$ if the \ac{pdf} of the random vector $\bm a$ modelling all attenuation values $\bm a$, given that hypothesis $\mathcal H_i$ is verified, and $\log$ denotes the base-2 logarithm. The \ac{np} test function is 
+where $p_{\bm a|\mathcal{H}}(\bm a|\mathcal{H}_i)$ is the \ac{pdf} of the random vector $\bm a$ modelling all attenuation values $\bm a$, given that hypothesis $\mathcal H_i$ is verified, and $\log$ denotes the base-2 logarithm. The \ac{np} test function is 
 \begin{equation}
 \label{eq:thrOpt}
     \hat{t} = g(\bm a) = \begin{cases}
@@ -313,7 +313,7 @@ where $P_{\rm MD}\left(P_{\rm FA}\right)$ is the $P_{\rm MD}$ value as a functio
 \end{equation}
 Note that minimizing the \ac{auc} is equivalent to minimizing the average $P_{\rm MD}$ under the assumption of a  uniformly distributed $P_{\rm FA}$.
 %\footnote{Notice that traditionally the \ac{auc} is a metric that needs to be maximized \cite{hanley-82}. This is due to the fact that the curve of the system performance computed as in \cite{hanley-82} and \cite{Kennedy-11} is given by the true positive rate vs. the false negative rate value, which is optimal when the true positive rate value is maximized for each false negative rate value. Since we consider as system performance metrics for the authentication system the $P_{\rm MD}$ and the $P_{\rm FA}$ we instead need to minimize the \ac{auc}.}
-In practice, in order to compute the \ac{auc} we must run the \ac{nn} over the training set  multiple times, with different thresholds and finding the corresponding \ac{roc} curve, before performing its integral by numerical methods.
+In practice, in order to compute the \ac{auc} we must run the \ac{nn} over the training set  multiple times, with different thresholds and find the corresponding \ac{roc} curve, before performing its integral by numerical methods.
 
 We hence propose to exploit the training process of the \ac{nn} and use the \ac{ce}, readily provided at the end of training, as a proxy of the system performance, avoiding an explicit estimation of  \ac{roc}  \ac{auc}. This is also motivated by Theorem 1, as the lower \ac{ce}, the more a \ac{nn} approaches \ac{np}, which is the optimal solution. 
 Recalling that the training minimization problem is non-convex, the same training set can lead to \acp{nn} with different classification performance and hence different \acp{auc}. However, we select the one minimizing the   \ac{ce}, which is expected to have the minimum \ac{auc}.
@@ -563,10 +563,10 @@ p_\xi(0) = \gy, \quad
 p_\xi(1) = 1- \gy.
 \end{equation}
 Note that $p_\xi$ is a valid \ac{pdf} since it sums to 1 and $\gy \in [0,1]$ by hypothesis.
-Recall now that the cross entropy between two discrete \acp{pmd} $p_{W_1}(w)$ and $p_{W_2}(w)$ having the same alphabet $\mathcal{W}$ is defined as
+Recall now that the cross entropy between two discrete \acp{pdf} $p_{W_1}(w)$ and $p_{W_2}(w)$ having the same alphabet $\mathcal{W}$ is defined as
 \begin{equation}
 \label{eq:defCross}
-	\cross{p_{W_1}}{W_2} = - \sum_{w \in \mathcal{W}} p_{W_1}(w) \log p_{W_2}(w).
+	\cross{p_{W_1}}{W_2} = - \sum_{w \in \mathcal{W}} p_{W_1}(w) \log p_{W_2}(w),
 \end{equation}
 and an equivalent definition is
 \begin{equation}
@@ -585,7 +585,7 @@ which from \eqref{eq:alternativeDef} yields
 		\E{\bm a}{H ( p_{\mathcal{H}|\bm a}) + D( p_{\mathcal{H}|\bm a}|| p_\xi)}
 \end{equation}
 
-Recall that \ac{nn} training is performed by minimizing the left hand side of \eqref{eq:final} with respect to \ac{nn} parameters. In the right hand side of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D( p_{\mathcal{H}|\bm a}||p_\xi)$. Then, with a infinite number of neurons (i.e., with the possibility of choosing any \ac{pmd} $p_\xi$, the minimum of the K-L divergence is  attained for $D(p_{\mathcal{H}|\bm a}||p_\xi)=0$, that is when $p_\xi(i) = p_{\mathcal{H}|\bm a}(i|\bm{a})$.
+Recall that \ac{nn} training is performed by minimizing the left hand side of \eqref{eq:final} with respect to \ac{nn} parameters. In the right hand side of \eqref{eq:final} the only quantity depending on \ac{nn} parameters, through $\gy$ in \eqref{eq:q}, is $D( p_{\mathcal{H}|\bm a}||p_\xi)$. Then, with a infinite number of neurons (i.e., with the possibility of choosing any \ac{pdf} $p_\xi$, the minimum of the K-L divergence is  attained for $D(p_{\mathcal{H}|\bm a}||p_\xi)=0$, that is when $p_\xi(i) = p_{\mathcal{H}|\bm a}(i|\bm{a})$.
 \end{appendices}
 
 \renewcommand*{\bibfont}{\footnotesize}
