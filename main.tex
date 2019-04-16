@@ -121,7 +121,7 @@ For a \ac{los} link the path loss coefficient in dB is modelled as
 where $f_0$ is the carrier frequency, and $c$ is the speed of light. For a  non-\ac{los} link the path loss coefficient in dB is defined as
 \begin{equation}
 \begin{split}
-    &a_{\rm PL-LOS}{(n)} = 40\left(1-4 \cdot 10^{-3} \left. h_{\rm AP} \right|_{\rm m} \right)  \times  \\
+    &a_{\rm PL-NLOS}{(n)} = 40\left(1-4 \cdot 10^{-3} \left. h_{\rm AP} \right|_{\rm m} \right)  \times  \\
     &\log_{10}\left (\left.\frac{L(\bm{x}_{\rm UE},\bm{x}_{\rm AP}^{(n)})}{10^3}\right|_{\rm m}\right ) -18\log_{10}\left.h_{\rm AP}\right|_{\rm m} +\\
     &
     + 21\log_{10}\left(\frac{\left.f_0\right|_{\rm MHz}}{10^6}\right) + 80,
@@ -210,7 +210,7 @@ From (\ref{eq:num}) and (\ref{eq:den}) we obtain the \ac{llr} as a function of t
 
 \subsection{Neural Network Implementation}\label{sec:nn}
 
-Under more complicated scenarios, it becomes hard to obtain close-form expressions for the \ac{llr}. Therefore, we reosrt to a \ac{ml} approach, using a \ac{nn}  trained with attenuation vectors $\bm{a}^{(i)}$ and labels $t_i \in \{0,1\}$. In the verification phase the trained \ac{nn} is used on the test attenuation vectors $\bm a$ to provide the decision $\hat{t} \in \{0,1\}$. Now, $g(\cdot)$ is the function implemented by the \ac{nn}.
+Under more complicated scenarios, it becomes hard to obtain close-form expressions for the \ac{llr}. Therefore, we resort to a \ac{ml} approach, using a \ac{nn}  trained with attenuation vectors $\bm{a}^{(i)}$ and labels $t_i \in \{0,1\}$. In the verification phase the trained \ac{nn} is used on the test attenuation vectors $\bm a$ to provide the decision $\hat{t} \in \{0,1\}$. Now, $g(\cdot)$ is the function implemented by the \ac{nn}.
 
 We now provide a short description of a \ac{nn}. A feed-forward \ac{nn} processes the input in stages, named layers, where the output of one layer is the input of the next layer. The input of the \ac{nn} is $\bm{y}^{(0)} = \bm{a}$, and layer $\ell-1$ has $N^{(\ell-1)}$ outputs obtained by processing the inputs with $N^{(\ell-1)}$ scalar functions named neurons. The output of the $n$-th neuron of the $\ell$-th layer is
 \begin{equation}\label{eq:nonLin}
